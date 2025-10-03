@@ -1,0 +1,284 @@
+/* assets/css/management.css */
+/* Estilos para telas de gerenciamento (Versão Refinada) */
+
+.content-management {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+.table-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-header h2 {
+    font-size: 1.75rem;
+    color: #1f2937;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.table-header p {
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+.alert-success {
+    background-color: #dcfce7;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+.alert-danger {
+    background-color: #fee2e2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    background-color: #3b82f6;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-add:hover {
+    background-color: #2563eb;
+}
+
+.search-form input[type="search"] {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.65rem 1rem;
+    font-size: 1rem;
+    width: 350px;
+    color: #1f2937;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-form input[type="search"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+}
+
+
+/* --- Tabela de Dados --- */
+.table-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.data-table th,
+.data-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle; /* Garante alinhamento vertical */
+}
+
+.data-table th {
+    background-color: #f9fafb;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.data-table td {
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.data-table td:nth-child(2) {
+    font-weight: 500;
+    color: #1f2937;
+}
+
+/* Estilo "zebrado" para linhas pares */
+.data-table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f3f4f6; /* Um cinza um pouco mais escuro para o hover */
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.no-results {
+    text-align: center;
+    color: #6b7280;
+    padding: 3rem;
+}
+
+/* Badges de Perfil */
+.data-table .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+}
+.data-table .badge-admin {
+    background-color: #fef2f2;
+    color: #b91c1c;
+}
+
+.data-table .badge-gerente {
+    background-color: #daffed; /* Verde mais visível */
+    color: #065f46; /* Verde escuro */
+}
+
+.data-table .badge-funcionario {
+    background-color: #fffef1;
+    color: #a16207;
+}
+
+.data-table .badge-cliente {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+}
+
+.data-table .badge-usuario {
+    background-color: #e6f1ff; /* Cinza mais visível */
+    color: #3e5477; /* Cinza bem escuro */
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end; /* Alinha os botões à direita da célula */
+    min-height: 32px; /* Garante altura mínima para a célula não "encolher" */
+}
+
+.actions-header {
+    text-align: right !important;
+}
+
+.actions .btn-action {
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+.actions .btn-action span {
+    line-height: 1;
+}
+
+.actions .edit {
+    background-color: #f59e0b;
+    color: #ffffff;
+}
+.actions .edit:hover {
+    background-color: #d97706;
+}
+
+.actions .delete {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+.actions .delete:hover {
+    background-color: #dc2626;
+}
+
+/* Estilo para os botões desativados */
+.actions .btn-action.disabled {
+    background-color: #e5e7eb; /* Fundo cinza */
+    color: #9ca3af; /* Texto cinza claro */
+    cursor: not-allowed; /* Cursor de "proibido" */
+    opacity: 0.7;
+}
+
+.actions .btn-action.disabled:hover {
+    background-color: #e5e7eb; /* Não muda de cor no hover */
+}
+
+/* Adicione no final do seu management.css */
+
+/* --- Estilos para o Hub de Gestão --- */
+.hub-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.hub-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 2rem;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease-in-out;
+}
+
+.hub-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+    border-color: #d1d5db;
+}
+
+.hub-card-icon {
+    color: #3b82f6; /* Azul primário */
+    flex-shrink: 0;
+}
+
+.hub-card-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.hub-card-content p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.5;
+}

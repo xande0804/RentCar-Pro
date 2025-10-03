@@ -1,0 +1,136 @@
+/* Estilo para o formulário */
+.form-container {
+    text-align: center; /* Centraliza o formulário dentro do .container pai */
+    max-width: 600px;
+    margin: 20px auto; /* Adiciona margem superior/inferior e centraliza */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #f9f9f9;
+}
+
+/* Estilo para o cabeçalho do formulário */
+.form-container h2 { /* Altere de h1 para h2 conforme seu HTML */
+    font-size: 24px; /* Aumentado para melhor visibilidade */
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+/* Estilo para mensagens de erro (geral, se aplicável) */
+.form-container .error-message { /* Corrigido para .error-message do seu HTML */
+    color: red;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Estilo para grupos de campos */
+.form-group {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
+    margin-bottom: 15px; /* Espaço entre os grupos de campos */
+    align-items: center; /* Alinha verticalmente os itens do grupo */
+}
+
+/* Estilo para o container da label */
+.form-group .label {
+    flex-basis: 150px; /* Largura base para a coluna da label */
+    flex-shrink: 0; /* Evita que a label encolha */
+    text-align: right;
+    padding-right: 15px;
+    box-sizing: border-box; /* Garante que padding não adicione largura */
+}
+
+/* Estilo para a tag <label> dentro do .label div */
+.form-group .label label {
+    font-weight: bold;
+    color: #555;
+    display: block; /* Garante que a label ocupe seu espaço */
+    padding-top: 10px; /* Ajusta para alinhar com o input */
+}
+
+/* Estilo para o container do input/select/textarea */
+.form-group .input {
+    flex-grow: 1; /* Permite que o container do input ocupe o espaço restante */
+    flex-shrink: 1; /* Permite que o container encolha se necessário */
+    min-width: 200px; /* Largura mínima para o campo de input */
+    box-sizing: border-box;
+}
+
+/* Estilo para os próprios inputs, selects e textareas */
+.form-group .input input,
+.form-group .input select,
+.form-group .input textarea {
+    width: 100%; /* Ocupa 100% da largura do seu div .input pai */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box; /* Crucial para padding/border não aumentarem a largura total */
+}
+
+/* Ajuste específico para small text como a dica de senha */
+.form-group .input small {
+    display: block;
+    margin-top: 5px;
+    color: #777;
+    font-size: 0.85em;
+    text-align: left;
+}
+
+/* Estilo para o botão de envio */
+.form-container button[type="submit"] { /* Seletor mais específico */
+    margin: 20px auto 10px auto; /* Centraliza o botão e adiciona margens */
+    padding: 12px 25px; /* Padding maior para o botão */
+    background-color: #007bff; /* Azul primário */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    display: block; /* Garante que o margin: auto funcione */
+    transition: background-color 0.3s ease; /* Transição suave no hover */
+}
+
+.form-container button[type="submit"]:hover {
+    background-color: #0056b3; /* Azul mais escuro no hover */
+}
+
+/* Estilo para mensagens de sessão (sucesso) */
+.success-message {
+    color: green;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Estilo para o link "Já possui uma conta?" */
+.form-container p.mt-2 {
+    text-align: center;
+    margin-top: 15px; /* Espaço acima do parágrafo */
+    font-size: 14px;
+}
+
+.form-container p.mt-2 a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.form-container p.mt-2 a:hover {
+    text-decoration: underline;
+}
+
+/* Para o div com a classe "label" que envolve o parágrafo "Já possui uma conta?" */
+/* Embora seu HTML coloque esse P dentro de um DIV com classe 'label',
+   é mais semântico estilizar o P diretamente ou uma DIV que o envolva,
+   e não usar a classe 'label' que é para campos de formulário.
+   Por enquanto, vou ignorar essa div. Se precisar estilizar, avise.
+*/
+/*
+.form-container .label p.mt-2 {
+    // estilos aqui
+}
+*/

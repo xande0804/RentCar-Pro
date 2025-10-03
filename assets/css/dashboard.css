@@ -1,0 +1,105 @@
+/* --- ESTILOS DA IMAGEM DE BANNER PRINCIPAL (topo.jpg) --- */
+.main-banner-image {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/image.jpg'); /* Caminho da imagem */
+    background-size: cover; /* Faz a imagem cobrir toda a área */
+    background-position: center center; /* Centraliza a imagem */
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100dvh; /* Altura fixa do seu banner */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra para o banner */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.banner-content {
+    color: white; /* Cor padrão do texto */
+    max-width: 56rem; /* Largura máxima para o conteúdo não ficar muito esticado em telas grandes */
+    padding: 0 1.5rem; /* Espaçamento lateral para telas menores */
+}
+
+.banner-content h1 {
+    font-size: 5rem;
+    line-height: 1;
+    font-weight: 700; /* Negrito */
+    margin-bottom: 1rem; /* Espaçamento abaixo do título */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Sombra para legibilidade */
+}
+
+.banner-content h1 .highlight {
+    color: rgb(96 165 250); /* Um tom de azul vibrante, similar ao da imagem */
+}
+
+.banner-content p {
+    font-size: 1.7rem; /* Tamanho para o subtítulo */
+    line-height: 2rem;
+    margin-bottom: 2rem; /* Espaçamento abaixo do subtítulo */
+    color: rgb(229 231 235);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra suave */
+}
+
+.banner-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Espaçamento entre os botões */
+}
+
+/* Estilo base para ambos os botões */
+.btn {
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    border: 2px solid transparent; /* Borda transparente para manter o alinhamento */
+    transition: all 0.3s ease;
+    height: 2.5rem;
+    align-items: center;
+    display: inline-flex;
+}
+
+/* Botão primário (azul) */
+.btn.btn-primary {
+    background-color: rgb(37 99 235);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    border: 2px solid transparent; /* Borda transparente para manter o alinhamento */
+    transition: all 0.3s ease;
+    height: 2.5rem;
+    align-items: center;
+    display: inline-flex;
+}
+
+.btn.btn-primary:hover {
+    background-color: rgb(29, 78, 206); /* Um tom de azul mais escuro no hover */
+}
+
+/* Botão secundário (borda branca) */
+.btn.btn-secondary {
+    background-color: transparent;
+    color: white;
+    border-color: white;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    border: 1px solid; /* Borda transparente para manter o alinhamento */
+    transition: all 0.3s ease;
+    height: 2.5rem;
+    align-items: center;
+    display: inline-flex;
+}
+
+.btn.btn-secondary:hover {
+    background-color: white;
+    color: black; /* Texto fica preto quando o fundo fica branco */
+}

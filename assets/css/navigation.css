@@ -1,0 +1,63 @@
+/* Conteúdo do seu dropdown.css */
+.menu-container { /* Esta classe é opcional se não usar o div envolvente */
+    display: flex;
+    justify-content: center;
+}
+
+.menu { /* Essencial para a lista UL principal */
+    background-color: rgb(167, 167, 171);
+    list-style:none;
+    border:1px solid #c0c0c0;
+    display: flex; /* Faz os itens principais ficarem lado a lado */
+    /* overflow: hidden; Importante para o layout */
+}
+
+.menu li { /* Para cada item LI principal */
+    position:relative; /* Crucial para posicionar o submenu */
+    border-right:1px solid #c0c0c0;
+}
+
+.menu li a { /* Para os links dos itens principais e subitens */
+    color:#333;
+    text-decoration:none;
+    padding:10px 15px;
+    display:block;
+}
+
+.menu li a:hover {
+    background:#333;
+    color:#fff;
+    box-shadow: 0 3px 10px 0 #CCC;
+    text-shadow:0px 0px 5px #fff;
+}
+
+/* Estilos para o SUBMENU (o <ul> aninhado dentro do <li> principal) */
+.menu li ul {
+    position:absolute;
+    top:100%; /* Posiciona o submenu logo abaixo do item pai */
+    left:0;
+    background-color:#ffffff;
+    display:none !important; /* Escondido por padrão */
+    z-index: 1000 !important; /* Garante que o submenu apareça sobre outros elementos */
+    min-width: 160px; /* Garante uma largura mínima para o submenu */
+    border:1px solid #c0c0c0; /* Adiciona uma borda para o submenu */
+    list-style: none; /* Remove marcadores de lista dos submenus */
+    padding: 0; /* Remove padding padrão do submenu */
+    margin: 0; /* Remove margem padrão do submenu */
+}
+
+/* Estilos para os ITENS do SUBMENU (os <li> dentro do <ul> do submenu) */
+.menu li ul li {
+    width: 100%; /* Ocupa a largura total do submenu pai */
+    border-right: none; /* Remove a borda direita para itens de submenu */
+    border-bottom: 1px solid #eee; /* Adiciona uma borda inferior para separar os itens */
+}
+
+.menu li ul li:last-child {
+    border-bottom: none; /* Remove a borda inferior do último item do submenu */
+}
+
+/* MOSTRA o submenu ao passar o mouse sobre o item pai */
+.menu li:hover ul {
+    display:block !important;
+}

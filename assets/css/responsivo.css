@@ -1,0 +1,45 @@
+/* Estilos para dispositivos menores, como smartphones e tablets */
+@media screen and (max-width: 768px) {
+  .header {
+    padding: 10px;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .navbar a {
+    padding: 10px;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+
+  .footer {
+    padding: 5px;
+  }
+}
+
+/* Estilos para dispositivos maiores, como laptops e desktops */
+@media screen and (min-width: 769px) {
+  .header {
+    padding: 20px;
+  }
+
+  .logo {
+    font-size: 36px;
+  }
+
+  .navbar a {
+    padding: 14px 16px;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .footer {
+    padding: 10px;
+  }
+}

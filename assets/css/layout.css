@@ -1,0 +1,132 @@
+/* public/css/layout.css */
+/* --- ESTILOS DA BARRA SUPERIOR (top-bar) --- */
+header{
+    width: 100%; /* Ocupa a largura total */
+    background-color: #ffffff; /* Fundo branco sólido */
+    border-bottom: 1px solid #e5e7eb; /* Linha sutil na parte inferior */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar {
+    max-width: 80rem; /* Limita a largura do conteúdo */
+    margin-left: auto; /* Centraliza o conteúdo */
+    margin-right: auto;
+    padding-left: 2rem; /* Espaçamento lateral */
+    padding-right: 2rem;
+    display: flex;
+    align-items: center;
+    color: rgb(31 41 55);
+    height: 4rem;
+    width: 100%;
+}
+
+.site-logo-text {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    flex-shrink: 0; 
+}
+
+.header-links{
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    display: flex;
+    justify-content: center; 
+    flex-grow: 1; 
+    gap: 0.5rem; 
+}
+
+.header-links a {
+    text-decoration: none;
+    color: rgb(31 41 55);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.header-links a:hover {
+    background-color: rgba(37, 41, 55, 0.1);
+    text-decoration: none;
+}
+
+.top-bar .user-info {
+    font-size: 14px;
+    display: flex;
+    align-items: center; 
+    gap: 1rem; 
+    flex-shrink: 0; 
+}
+
+/* --- ESTILO DO BOTÃO DE LOGOUT --- */
+.user-info .btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.user-info .btn-logout:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    color: #1f2937;
+    text-decoration: none;
+}
+
+/* MODIFICADO: Estilo para o botão "Entrar" (fundo branco, borda e texto pretos) */
+.user-info .btn-header-action {
+    padding: 0.5rem 1rem;
+    border: 1px solid hsl(0 0% 89.8%); /* Borda preta */
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    color: #212529; /* Texto preto */
+    background-color: #ffffff; /* Fundo branco */
+    transition: all 0.2s ease;
+}
+
+/* MODIFICADO: Estilo para o botão "Cadastrar" (fundo preto, texto branco) */
+.user-info .btn-header-action.primary {
+    background-color: #171717; /* Fundo preto */
+    border-color: #212529; /* Borda preta */
+    color: #ffffff; /* Texto branco */
+}
+
+/* MODIFICADO: Efeito hover para ambos os botões */
+.user-info .btn-header-action:hover {
+    background-color: #f8f9fa; /* Fundo levemente cinza para o botão branco */
+    color: #000000;
+}
+.user-info .btn-header-action.primary:hover {
+    background-color: #171717e6; /* Fundo cinza escuro para o botão preto */
+    border-color: #343a40;
+    color: #ffffff;
+}
+
+/* --- ESTILOS DO RODAPÉ --- */
+.footer {
+    background-color: #ffffff; /* Fundo branco sólido */
+    color: rgb(31 41 55);
+    text-align: center;
+    padding: 10px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    width: 100%;
+    border-top: 1px solid #e5e7eb;
+}

@@ -23,6 +23,16 @@ require_once __DIR__ . '/../view/layout/header.php';
 </div>
 
 <div class="container" style="padding-top: 2rem; text-align: center;">
+
+    <?php
+    if (isset($_SESSION['flash_message'])) {
+        $flashMessage = $_SESSION['flash_message'];
+        $messageType = $flashMessage['type'] === 'success' ? 'alert-success' : 'alert-danger';
+        echo "<div class='alert {$messageType}'>" . htmlspecialchars($flashMessage['message']) . "</div>";
+        unset($_SESSION['flash_message']);
+    }
+    ?>
+
     <h2>Bem-vindo ao Sistema, <?php echo htmlspecialchars(ucfirst($usuarioPerfil)); ?>!</h2>
     <p>Use o menu no topo para navegar.</p>
 </div>

@@ -128,4 +128,48 @@ class UsuarioDAO {
             return false;
         }
     }
+
+    public function updateCadastroCompleto($id, $cpf, $telefone) {
+        try {
+            $sql = "UPDATE tbl_usuarios SET 
+                        cpf = :cpf, 
+                        telefone = :telefone, 
+                        cadastro_completo = 1
+                    WHERE cod_usuario = :id";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(":cpf", $cpf);
+            $stmt->bindValue(":telefone", $telefone);
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Erro ao completar cadastro do usuário: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateProfile($id, $novoPerfil) {
+        try {
+            $sql = "UPDATE tbl_usuarios SET perfil = :perfil WHERE cod_usuario = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(":perfil", $novoPerfil);
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Erro ao atualizar perfil do usuário: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getAllClientesEUsuarios() {
+        try {
+            $sql = "SELECT cod_usuario, nome, email, perfil, cadastro_completo FROM tbl_usuarios WHERE perfil IN ('cliente', 'usuario') ORDER BY nome ASC";
+            $stmt = $this->pdo->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erro ao listar clientes e usuários: " . $e->getMessage());
+            return [];
+        }
+    }
 }

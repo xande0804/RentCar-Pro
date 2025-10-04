@@ -56,7 +56,17 @@ $usuarios = $usuarioDAO->getAll();
                             <td><?= htmlspecialchars($user['cod_usuario']) ?></td>
                             <td><?= htmlspecialchars($user['nome']) ?></td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
-                            <td><span class="badge badge-<?= strtolower($user['perfil']) ?>"><?= ucfirst($user['perfil']) ?></span></td>
+                            <td>
+                                <?php
+                                $badgeClass = 'badge-' . strtolower($user['perfil']);
+                                $perfilTexto = $user['perfil'];
+                                if ($user['perfil'] === 'usuario' && $user['cadastro_completo'] == 1) {
+                                    $badgeClass = 'badge-usuario-completo';
+                                    $perfilTexto = 'Usuário Completo';
+                                }
+                                ?>
+                                <span class="badge <?= $badgeClass ?>"><?= htmlspecialchars($perfilTexto) ?></span>
+                            </td>
                             <td class="actions">
                                 <?php
                                 $podeEditar = true; $podeExcluir = true; 

@@ -47,6 +47,7 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
                 <a href="view/admin/hub.php">Painel de Gestão</a>
             <?php else: ?>
                  <a href="view/carros/index.php">Carros</a>
+                 <a href="view/reservas/minhasReservas.php">Minhas Reservas</a>
             <?php endif; ?>
         </nav>
         

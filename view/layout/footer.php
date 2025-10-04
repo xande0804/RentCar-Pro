@@ -7,7 +7,7 @@
 
 <?php if (isset($jsFiles) && is_array($jsFiles)): ?>
     <?php foreach ($jsFiles as $jsFile): ?>
-        <script src="/assets/js/<?= htmlspecialchars($jsFile) ?>"></script>
+        <script src="assets/js/<?= htmlspecialchars($jsFile) ?>"></script>
     <?php endforeach; ?>
 <?php endif; ?>
 

@@ -79,27 +79,55 @@
 
 .btn.btn-primary:hover {
     background-color: rgb(29, 78, 206); /* Um tom de azul mais escuro no hover */
+    transform: scale(1.05);
 }
 
-/* Botão secundário (borda branca) */
 .btn.btn-secondary {
-    background-color: transparent;
-    color: white;
-    border-color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgb(0, 0, 0);
+    border: 1px solid rgb(0, 0, 0);
     padding: 1rem 2rem;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 500;
     font-size: 1.125rem;
     line-height: 1.75rem;
-    border: 1px solid; /* Borda transparente para manter o alinhamento */
-    transition: all 0.3s ease;
-    height: 2.5rem;
-    align-items: center;
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    transition: all 0.3s ease;
 }
 
 .btn.btn-secondary:hover {
     background-color: white;
-    color: black; /* Texto fica preto quando o fundo fica branco */
+    color: black;
+    border-color: rgb(0, 0, 0);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.btn2.btn-secondary2 {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgb(255, 255, 255);
+    border: 1px solid rgb(255, 255, 255);
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn2.btn-secondary2:hover {
+    background-color: white;
+    color: black;
+    border-color: rgb(0, 0, 0);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }

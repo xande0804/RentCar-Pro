@@ -5,7 +5,7 @@ require_once __DIR__ . '/../layout/header.php';
 
 // --- SEGURANÇA E DADOS ---
 if (!$usuarioLogado) {
-    header("Location: " . BASE_URL . "/view/auth/login.php");
+    header("Location: ". BASE_URL . "/view/auth/login.php");
     exit;
 }
 
@@ -20,6 +20,16 @@ $reservas = $reservaDAO->getByUserId($_SESSION['usuario']['id']);
         <p>Aqui está o histórico de todas as suas locações.</p>
     </div>
 
+    <?php
+    // Bloco para exibir as Flash Messages (sucesso, erro)
+    if (isset($_SESSION['flash_message'])) {
+        $flashMessage = $_SESSION['flash_message'];
+        $messageType = $flashMessage['type'] === 'success' ? 'alert-success' : 'alert-danger';
+        echo "<div class='alert {$messageType}'>" . htmlspecialchars($flashMessage['message']) . "</div>";
+        unset($_SESSION['flash_message']);
+    }
+    ?>
+
     <?php if (empty($reservas)): ?>
         <div class="text-center p-5 border rounded bg-light">
             <h4>Você ainda não tem nenhuma reserva.</h4>
@@ -29,21 +39,30 @@ $reservas = $reservaDAO->getByUserId($_SESSION['usuario']['id']);
     <?php else: ?>
         <table class="table table-striped table-hover">
             <thead>
-                <tr><th>Carro</th><th>Data de Retirada</th><th>Data de Devolução</th><th>Valor Total</th><th>Status</th></tr>
+                <tr><th>Carro</th><th>Período</th><th>Valor Total</th><th>Status</th><th class="actions-header">Ação</th></tr>
             </thead>
             <tbody>
                 <?php foreach ($reservas as $reserva): ?>
                     <tr>
                         <td><?= htmlspecialchars($reserva['marca'] . ' ' . $reserva['modelo']) ?></td>
-                        <td><?= date('d/m/Y', strtotime($reserva['data_inicio'])) ?></td>
-                        <td><?= date('d/m/Y', strtotime($reserva['data_fim'])) ?></td>
+                        <td><?= date('d/m/Y', strtotime($reserva['data_inicio'])) ?> a <?= date('d/m/Y', strtotime($reserva['data_fim'])) ?></td>
                         <td>R$ <?= htmlspecialchars(number_format($reserva['valor_total'], 2, ',', '.')) ?></td>
-                        <td><span class="badge bg-info text-dark"><?= ucfirst($reserva['status']) ?></span></td>
+                        <td><span class="badge badge-<?= strtolower($reserva['status']) ?>"><?= ucfirst($reserva['status']) ?></span></td>
+                        <td class="actions">
+                            <?php if ($reserva['status'] == 'pendente'): ?>
+                                <form action="controller/ReservaControl.php" method="POST" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva?');">
+                                    <input type="hidden" name="acao" value="cancelar_reserva">
+                                    <input type="hidden" name="cod_reserva" value="<?= $reserva['cod_reserva'] ?>">
+                                    <button type="submit" class="btn-action delete">Cancelar</button>
+                                </form>
+                            <?php else: ?>
+                                <span>--</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php endif; ?>
 </div>
-
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>

@@ -16,7 +16,7 @@ require_once __DIR__ . '/../view/layout/header.php';
                 <a href="view/carros/index.php" class="btn btn-primary">Ver Carros Disponíveis</a>
             <?php else: ?>
                 <a href="view/carros/index.php" class="btn btn-primary">Ver Carros Disponíveis</a>
-                <a href="view/auth/cadastroUsuario.php" class="btn btn-secondary">Cadastre-se agora</a>
+                <a href="view/auth/cadastroUsuario.php" class="btn2 btn-secondary2">Cadastre-se agora</a>
             <?php endif; ?>
         </div>
     </div>

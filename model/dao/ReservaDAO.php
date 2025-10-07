@@ -11,10 +11,8 @@ class ReservaDAO {
 
     public function create(ReservaDTO $reserva) {
         try {
-            // Inicia uma transação para garantir que ambas as operações funcionem
             $this->pdo->beginTransaction();
 
-            // 1. Insere a nova reserva na tabela de reservas
             $sql_reserva = "INSERT INTO tbl_reservas (cod_usuario, cod_carro, data_inicio, data_fim, valor_total, status) 
                             VALUES (?, ?, ?, ?, ?, ?)";
             $stmt_reserva = $this->pdo->prepare($sql_reserva);
@@ -24,30 +22,23 @@ class ReservaDAO {
                 $reserva->getDataInicio(),
                 $reserva->getDataFim(),
                 $reserva->getValorTotal(),
-                'pendente' // Todas as reservas começam como 'pendente'
+                'pendente'
             ]);
 
-            // 2. Atualiza o status do carro na tabela de carros para 'reservado'
             $sql_carro = "UPDATE tbl_carros SET status = 'reservado' WHERE cod_carro = ?";
             $stmt_carro = $this->pdo->prepare($sql_carro);
             $stmt_carro->execute([$reserva->getCodCarro()]);
 
-            // Se as duas operações acima deram certo, confirma as alterações no banco
             $this->pdo->commit();
             return true;
 
         } catch (PDOException $e) {
-            // Se qualquer uma das operações falhar, desfaz tudo
             $this->pdo->rollBack();
             error_log("Erro ao criar reserva: " . $e->getMessage());
             return false;
         }
     }
 
-    /**
-     * Retorna todas as reservas, juntando dados do carro e do usuário.
-     * Usado no painel de gerenciamento do funcionário.
-     */
     public function getAll() {
         try {
             $sql = "SELECT r.*, c.marca, c.modelo, u.nome as nome_usuario 
@@ -63,10 +54,6 @@ class ReservaDAO {
         }
     }
 
-    /**
-     * Retorna todas as reservas de um usuário específico.
-     * Usado na tela 'Minhas Reservas' do cliente.
-     */
     public function getByUserId($userId) {
         try {
             $sql = "SELECT r.*, c.marca, c.modelo 
@@ -104,16 +91,13 @@ class ReservaDAO {
         try {
             $this->pdo->beginTransaction();
 
-            // 1. Pega o ID do carro ANTES de deletar a reserva
             $stmt_get_car = $this->pdo->prepare("SELECT cod_carro FROM tbl_reservas WHERE cod_reserva = ?");
             $stmt_get_car->execute([$reservaId]);
             $carroId = $stmt_get_car->fetchColumn();
 
-            // 2. Deleta a reserva
             $stmt_delete = $this->pdo->prepare("DELETE FROM tbl_reservas WHERE cod_reserva = ?");
             $stmt_delete->execute([$reservaId]);
 
-            // 3. Atualiza o status do carro para 'disponivel'
             if ($carroId) {
                 $stmt_carro = $this->pdo->prepare("UPDATE tbl_carros SET status = 'disponivel' WHERE cod_carro = ?");
                 $stmt_carro->execute([$carroId]);
@@ -132,17 +116,14 @@ class ReservaDAO {
         try {
             $this->pdo->beginTransaction();
 
-            // 1. Atualiza o status da reserva
             $sql_reserva = "UPDATE tbl_reservas SET status = ? WHERE cod_reserva = ?";
             $stmt_reserva = $this->pdo->prepare($sql_reserva);
             $stmt_reserva->execute([$novoStatusReserva, $reservaId]);
 
-            // 2. Pega o ID do carro a partir da reserva
             $stmt_get_car = $this->pdo->prepare("SELECT cod_carro FROM tbl_reservas WHERE cod_reserva = ?");
             $stmt_get_car->execute([$reservaId]);
             $carroId = $stmt_get_car->fetchColumn();
 
-            // 3. Atualiza o status do carro
             if ($carroId) {
                 $sql_carro = "UPDATE tbl_carros SET status = ? WHERE cod_carro = ?";
                 $stmt_carro = $this->pdo->prepare($sql_carro);
@@ -154,6 +135,66 @@ class ReservaDAO {
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             error_log("Erro ao atualizar status da reserva: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function findById($reservaId) {
+        try {
+            $sql = "SELECT * FROM tbl_reservas WHERE cod_reserva = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$reservaId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erro ao buscar reserva por ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function cancel($reservaId) {
+        try {
+            $this->pdo->beginTransaction();
+
+            $reserva = $this->findById($reservaId);
+            if (!$reserva) throw new Exception("Reserva não encontrada.");
+
+            $sql_reserva = "UPDATE tbl_reservas SET status = 'cancelada' WHERE cod_reserva = ?";
+            $stmt_reserva = $this->pdo->prepare($sql_reserva);
+            $stmt_reserva->execute([$reservaId]);
+
+            $sql_carro = "UPDATE tbl_carros SET status = 'disponivel' WHERE cod_carro = ?";
+            $stmt_carro = $this->pdo->prepare($sql_carro);
+            $stmt_carro->execute([$reserva['cod_carro']]);
+
+            $this->pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            error_log("Erro ao cancelar reserva: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Verifica se o carro está disponível em um período específico.
+     * Retorna true se disponível, false se houver conflito.
+     */
+    public function checkDisponibilidade($cod_carro, $data_inicio, $data_fim) {
+        try {
+            $sql = "SELECT COUNT(*) as total 
+                    FROM tbl_reservas 
+                    WHERE cod_carro = :cod_carro 
+                      AND status IN ('pendente', 'ativa') 
+                      AND NOT (data_fim < :data_inicio OR data_inicio > :data_fim)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindValue(':cod_carro', $cod_carro, PDO::PARAM_INT);
+            $stmt->bindValue(':data_inicio', $data_inicio);
+            $stmt->bindValue(':data_fim', $data_fim);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] == 0;
+        } catch (PDOException $e) {
+            error_log("Erro ao verificar disponibilidade do carro: " . $e->getMessage());
             return false;
         }
     }

@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Lógica de sessão do nosso modelo simples
-$usuarioLogado = $_SESSION['usuario_logado'] ?? false;
+$usuarioLogado = isset($_SESSION['usuario']);
 $usuarioNome = $_SESSION['usuario']['nome'] ?? '';
 $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
 ?>
@@ -47,6 +47,8 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
                 <a href="view/admin/hub.php">Painel de Gestão</a>
             <?php else: ?>
                  <a href="view/carros/index.php">Carros</a>
+            <?php endif; ?>
+            <?php if (in_array($usuarioPerfil, ['usuario', 'cliente'])): ?>
                  <a href="view/reservas/minhasReservas.php">Minhas Reservas</a>
             <?php endif; ?>
         </nav>

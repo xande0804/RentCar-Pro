@@ -4,16 +4,26 @@ session_start();
 require_once __DIR__ . '/../../config.php';
 
 // Segurança: Apenas usuários logados podem acessar
-if (!isset($_SESSION['usuario_logado'])) {
+if (empty($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) {
     header("Location: " . BASE_URL . "/view/auth/login.php?erro=" . urlencode("Você precisa estar logado."));
     exit;
 }
+
 
 $pageTitle = "Complete seu Cadastro";
 // Captura os IDs da URL
 $clienteId = filter_input(INPUT_GET, 'clienteId', FILTER_VALIDATE_INT);
 $carroId = filter_input(INPUT_GET, 'carroId', FILTER_VALIDATE_INT);
+
+$isNovoCliente = isset($_GET['novo_cliente']) && $_GET['novo_cliente'] === 'true';
+if ($isNovoCliente) {
+    // Pega os dados da URL
+    $nome = $_GET['nome'] ?? '';
+    $email = $_GET['email'] ?? '';
+    $senha = $_GET['senha'] ?? '';
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>

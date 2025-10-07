@@ -172,4 +172,38 @@ class UsuarioDAO {
             return [];
         }
     }
+
+    public function createAndReturnId(UsuarioDTO $usuario) {
+        try {
+            $sql = "INSERT INTO tbl_usuarios (nome, email, senha, perfil, cpf, telefone) 
+                    VALUES (:nome, :email, :senha, :perfil, :cpf, :telefone)";
+            $stmt = $this->pdo->prepare($sql);
+            
+            // Criptografa a senha antes de salvar
+            $senhaHash = password_hash($usuario->getSenha(), PASSWORD_DEFAULT);
+
+            $stmt->bindValue(":nome", $usuario->getNome());
+            $stmt->bindValue(":email", $usuario->getEmail());
+            $stmt->bindValue(":senha", $senhaHash);
+            $stmt->bindValue(":perfil", $usuario->getPerfil());
+            
+            // Estes podem ser nulos no cadastro inicial
+            $stmt->bindValue(":cpf", $usuario->getCpf());
+            $stmt->bindValue(":telefone", $usuario->getTelefone());
+
+            // Executa a inserção
+            if ($stmt->execute()) {
+                // Se a execução foi bem-sucedida, retorna o último ID inserido
+                return $this->pdo->lastInsertId();
+            } else {
+                // Se a execução falhar por outro motivo
+                return false;
+            }
+
+        } catch (PDOException $e) {
+            // Se ocorrer uma exceção (como e-mail duplicado), registra o erro
+            error_log("Erro ao criar usuário e retornar ID: " . $e->getMessage());
+            return false;
+        }
+    }
 }

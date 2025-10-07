@@ -27,16 +27,33 @@ if ($acao === 'login') {
         $usuario = $usuarioDAO->findByEmail($email);
 
         if ($usuario && password_verify($senha, $usuario['senha'])) {
+            // Popula a sessão com os dados do usuário
             $_SESSION['usuario_logado'] = true;
-            $_SESSION['usuario'] = [ 
-                'id' => $usuario['cod_usuario'], 
-                'nome' => $usuario['nome'], 
-                'email' => $usuario['email'], 
-                'perfil' => $usuario['perfil'] 
+            $_SESSION['usuario'] = [
+                'id'     => $usuario['cod_usuario'],
+                'nome'   => $usuario['nome'],
+                'email'  => $usuario['email'],
+                'perfil' => $usuario['perfil']
             ];
+
+    
+            // --- LÓGICA DE REDIRECIONAMENTO INTELIGENTE ---
+            if (isset($_SESSION['reserva_pendente_dados'])) {
+                $dadosReserva = $_SESSION['reserva_pendente_dados'];
+                unset($_SESSION['reserva_pendente_dados']); // Limpa a sessão
+                
+                // Remonta a URL da tela de finalização
+                $idCarro = $dadosReserva['cod_carro'];
+                header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $idCarro);
+                exit;
+            }
+
+            // Se não havia reserva pendente, redireciona para a página inicial padrão.
             header("Location: " . BASE_URL . "/public/index.php");
             exit;
+
         } else {
+            // Se a senha ou o email estiverem errados
             header("Location: " . BASE_URL . "/view/auth/login.php?erro=" . urlencode("Usuário ou senha inválidos!"));
             exit;
         }

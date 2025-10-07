@@ -140,11 +140,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $enderecoDAO = new EnderecoDAO();
         $enderecoSalvo = $enderecoDAO->createOrUpdate($enderecoDTO);
     
-        if ($usuarioAtualizado && $enderecoSalvo) {            
-            // Se um carroId foi passado, significa que devemos continuar para a reserva
-            if ($carroIdPendente) {
-                // Remonta a URL de finalização com os dados corretos
-                $redirectUrl = BASE_URL . "/view/reservas/finalizar.php?id=" . $carroIdPendente . "&clienteId=" . $idUsuarioParaCompletar;
+        if ($usuarioAtualizado && $enderecoSalvo) {
+            // Verifica a sessão correta
+            if (isset($_SESSION['reserva_pendente_dados'])) {
+                $dadosReserva = $_SESSION['reserva_pendente_dados'];
+                unset($_SESSION['reserva_pendente_dados']);
+    
+                // Remonta a URL de finalização com os dados guardados
+                $idCarro = $dadosReserva['cod_carro'];
+                $clienteId = $dadosReserva['cod_usuario'] ?? null;
+    
+                $redirectUrl = BASE_URL . "/view/reservas/finalizar.php?id=" . $idCarro;
+                // Se um funcionário estava fazendo a reserva para um cliente
+                if ($clienteId && $clienteId != ($_SESSION['usuario']['id'] ?? null)) {
+                    $redirectUrl .= "&clienteId=" . $clienteId;
+                }
                 header("Location: " . $redirectUrl);
                 exit;
             }
@@ -158,6 +168,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     }
+}
+
+else if ($acao === 'admin_criar_cliente_completo') {
+    require_once __DIR__ . "/../model/dto/EnderecoDTO.php";
+    require_once __DIR__ . "/../model/dao/EnderecoDAO.php";
+
+    // 1. Pega os dados básicos que vieram dos campos ocultos
+    $nome = trim($_POST['nome'] ?? '');
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $senha = $_POST["senha"] ?? "";
+
+    // 2. Cria o usuário básico com perfil 'cliente'
+    $usuarioDTO = new UsuarioDTO();
+    $usuarioDTO->setNome($nome);
+    $usuarioDTO->setEmail($email);
+    $usuarioDTO->setSenha($senha);
+    $usuarioDTO->setPerfil('cliente');
+    
+    // O método create() do DAO precisa retornar o ID do usuário criado
+    $novoUsuarioId = $usuarioDAO->createAndReturnId($usuarioDTO); // PRECISAREMOS CRIAR ESTE MÉTODO
+
+    if ($novoUsuarioId) {
+        // 3. Pega os dados completos do formulário
+        $cpf = trim($_POST['cpf'] ?? '');
+        $telefone = trim($_POST['telefone'] ?? '');
+        
+        // 4. Atualiza o cadastro para completo
+        $usuarioDAO->updateCadastroCompleto($novoUsuarioId, $cpf, $telefone);
+
+        // 5. Salva o endereço
+        $enderecoDAO = new EnderecoDAO();
+        $enderecoDTO = new EnderecoDTO();
+        $enderecoDTO->setCodUsuario($novoUsuarioId);
+        // ... (faça os sets para todos os campos do endereço do $_POST) ...
+        $enderecoDAO->createOrUpdate($enderecoDTO);
+        
+        $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Novo cliente cadastrado com sucesso!'];
+    } else {
+        $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao criar o cliente. O e-mail pode já existir.'];
+    }
+    header("Location: " . $redirectURL); // Volta para a lista de usuários
+    exit;
 }
 
 // Redireciona de volta para a lista de usuários após qualquer ação

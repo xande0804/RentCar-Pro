@@ -153,8 +153,10 @@ $usuarios = $usuarioDAO->getAll();
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Lógica para preencher o modal de edição
     const editModal = document.getElementById('editModal');
     if(editModal) {
+        // Preenche o modal com os dados do usuário ao abrir
         editModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
             const id = button.getAttribute('data-id');
@@ -168,14 +170,64 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.querySelector('#edit-email').value = email;
             modal.querySelector('#edit-perfil').value = perfil;
         });
+
+        // NOVA LÓGICA: Redireciona se o perfil for alterado para 'cliente'
+        const editPerfilSelect = editModal.querySelector('#edit-perfil');
+        editPerfilSelect.addEventListener('change', function() {
+            if (this.value === 'cliente') {
+                if (confirm('Você selecionou "Cliente". Deseja completar o cadastro deste usuário agora?')) {
+                    const id = editModal.querySelector('#edit-id').value;
+                    // Redireciona para a tela de completar cadastro, passando o ID do usuário
+                    window.location.href = `view/profile/completarCadastro.php?id_usuario_para_completar=${id}`;
+                }
+            }
+        });
     }
 
+    // Lógica para interceptar a criação de um novo 'cliente'
+    const createModal = document.getElementById('createModal');
+    if (createModal) {
+        const createForm = createModal.querySelector('form');
+        const perfilSelect = createModal.querySelector('select[name="perfil"]');
+        
+        createForm.addEventListener('submit', function(event) {
+            if (perfilSelect.value === 'cliente') {
+                event.preventDefault();
+
+                const nome = createForm.querySelector('input[name="nome"]').value;
+                const email = createForm.querySelector('input[name="email"]').value;
+                const senha = createForm.querySelector('input[name="senha"]').value;
+
+                if (!nome || !email || !senha) {
+                    alert('Por favor, preencha nome, email e senha antes de prosseguir.');
+                    return;
+                }
+
+                const url = `view/profile/completarCadastro.php?novo_cliente=true&nome=${encodeURIComponent(nome)}&email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`;
+                window.location.href = url;
+            }
+        });
+    }
+
+    // Lógica para reabrir modais com erros (vinda do management.js)
     <?php
     if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_message']['modal'])) {
         $validationData = $_SESSION['flash_message'];
         echo "const serverValidationData = " . json_encode($validationData) . ";";
-        unset($_SESSION['flash_message']); // Limpa após usar
+        unset($_SESSION['flash_message']);
     }
     ?>
+    if (typeof serverValidationData !== 'undefined') {
+        const modalId = serverValidationData.modal === 'create' ? 'createModal' : 'editModal';
+        const errorContainerId = serverValidationData.modal === 'create' ? 'createError' : 'editError';
+        const modalElement = document.getElementById(modalId);
+        const errorContainer = document.getElementById(errorContainerId);
+        if (modalElement && errorContainer) {
+            errorContainer.textContent = serverValidationData.error;
+            errorContainer.classList.remove('d-none');
+            const modalInstance = new bootstrap.Modal(modalElement);
+            modalInstance.show();
+        }
+    }
 });
 </script>

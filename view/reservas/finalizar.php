@@ -3,26 +3,35 @@ require_once __DIR__ . '/../../config.php';
 $pageTitle = "Finalizar Reserva";
 require_once __DIR__ . '/../layout/header.php';
 
-// --- LÓGICA DE "PORTEIRO" ---
-if (!$usuarioLogado) {
-    header("Location: " . BASE_URL . "/view/auth/login.php?erro=" . urlencode("Acesso negado."));
-    exit;
-}
-
+// --- LÓGICA FLEXÍVEL DE ACESSO ---
 $carroId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $clienteId = filter_input(INPUT_GET, 'clienteId', FILTER_VALIDATE_INT);
-$usuarioParaReservaId = $clienteId ?: $_SESSION['usuario']['id'];
+
+$usuarioParaReservaId = null;
+
+// Se estiver logado, usa o ID da sessão
+if (isset($_SESSION['usuario']['id'])) {
+    $usuarioParaReservaId = $_SESSION['usuario']['id'];
+} 
+// Se veio um cliente específico (caso funcionário selecione)
+elseif ($clienteId) {
+    $usuarioParaReservaId = $clienteId;
+}
 
 require_once __DIR__ . '/../../model/dao/UsuarioDAO.php';
 $usuarioDAO = new UsuarioDAO();
-$usuarioDaReserva = $usuarioDAO->findById($usuarioParaReservaId);
 
-if ($usuarioDaReserva && $usuarioDaReserva['cadastro_completo'] == 0) {
-    $_SESSION['reserva_pendente'] = ['carroId' => $carroId, 'clienteId' => $usuarioParaReservaId];
-    header("Location: " . BASE_URL . "/view/profile/completarCadastro.php");
-    exit;
+
+if ($usuarioParaReservaId) {
+    $usuarioDaReserva = $usuarioDAO->findById($usuarioParaReservaId);
+
+    if ($usuarioDaReserva && $usuarioDaReserva['cadastro_completo'] == 0) {
+        $_SESSION['reserva_pendente'] = ['carroId' => $carroId, 'clienteId' => $usuarioParaReservaId];
+        header("Location: " . BASE_URL . "/view/profile/completarCadastro.php");
+        exit;
+    }
 }
-// --- FIM DA LÓGICA DE "PORTEIRO" ---
+// --- FIM DA LÓGICA FLEXÍVEL DE ACESSO ---
 
 if (!$carroId) {
     header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Carro inválido."));

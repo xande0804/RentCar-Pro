@@ -122,15 +122,3 @@
 .form-container p.mt-2 a:hover {
     text-decoration: underline;
 }
-
-/* Para o div com a classe "label" que envolve o parágrafo "Já possui uma conta?" */
-/* Embora seu HTML coloque esse P dentro de um DIV com classe 'label',
-   é mais semântico estilizar o P diretamente ou uma DIV que o envolva,
-   e não usar a classe 'label' que é para campos de formulário.
-   Por enquanto, vou ignorar essa div. Se precisar estilizar, avise.
-*/
-/*
-.form-container .label p.mt-2 {
-    // estilos aqui
-}
-*/

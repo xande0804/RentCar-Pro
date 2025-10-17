@@ -1,97 +1,85 @@
 <?php
-session_start(); // Inicia a sessão para acessar variáveis de sessão
-require_once __DIR__ . '/../config.php'; // Inclui configuração do sistema (BASE_URL, DB, etc.)
-require_once __DIR__ . "/../model/dao/UsuarioDAO.php"; // DAO de usuários
-require_once __DIR__ . "/../model/dao/CarroDAO.php"; // DAO de carros
-require_once __DIR__ . "/../model/dao/ReservaDAO.php"; // DAO de reservas
-require_once __DIR__ . "/../model/dao/PlanoDAO.php"; // DAO de planos de desconto
-require_once __DIR__ . "/../model/dto/ReservaDTO.php"; // DTO de reserva (objeto)
+session_start();
+require_once __DIR__ . '/../config.php'; // Já inclui registrarLog()
+require_once __DIR__ . "/../model/dao/UsuarioDAO.php";
+require_once __DIR__ . "/../model/dao/CarroDAO.php";
+require_once __DIR__ . "/../model/dao/ReservaDAO.php";
+require_once __DIR__ . "/../model/dao/PlanoDAO.php";
+require_once __DIR__ . "/../model/dto/ReservaDTO.php";
 
-$acao = $_GET['acao'] ?? $_POST['acao'] ?? ''; // Define qual ação será executada (via GET ou POST)
+$acao = $_GET['acao'] ?? $_POST['acao'] ?? '';
+$nomeUsuarioLogado = $_SESSION['usuario']['nome'] ?? 'Sistema';
+$idUsuarioLogado   = $_SESSION['usuario']['id'] ?? null;
 
-// --- AÇÃO 1: INICIA O PROCESSO DE RESERVA (O "PORTEIRO") ---
+// --- INICIAR RESERVA (da vitrine de carros) ---
 if ($acao === 'iniciar') {
-    $idCarro = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT); // Pega o ID do carro da URL
-    $perfilUsuarioLogado = $_SESSION['usuario']['perfil'] ?? null; // Perfil do usuário logado
+    $idCarro = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    $perfilUsuarioLogado = $_SESSION['usuario']['perfil'] ?? null;
 
-    // Se for um funcionário/admin/gerente, não pode iniciar reserva assim
+    // Funcionários não iniciam reserva direto pela vitrine
     if (in_array($perfilUsuarioLogado, ['admin', 'gerente', 'funcionario'])) {
         header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Ação inválida. Selecione um cliente no modal."));
         exit;
     }
-    
-    // Para usuário comum ou visitante, redireciona para página de finalização da reserva
+
     header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $idCarro);
     exit;
 }
 
-// --- AÇÃO 2: FINALIZA E SALVA A RESERVA NO BANCO ---
+// --- FINALIZAR RESERVA (criação real) ---
 if ($acao === 'finalizar_reserva') {
-
-    $idUsuarioLogado = $_SESSION['usuario']['id'] ?? null;
-
-    // --- BARREIRA DE LOGIN ---
     if (!$idUsuarioLogado) {
-        $_SESSION['reserva_pendente_dados'] = $_POST; // Salva dados para continuar após login
+        $_SESSION['reserva_pendente'] = $_POST;
         header("Location: " . BASE_URL . "/view/auth/login.php?erro=" . urlencode("Você precisa fazer login para confirmar a reserva."));
         exit;
     }
 
-    // --- BARREIRA DE CADASTRO COMPLETO ---
+    $cod_carro   = filter_input(INPUT_POST, 'cod_carro', FILTER_VALIDATE_INT);
+    $data_inicio = $_POST['data_inicio'] ?? '';
+    $data_fim    = $_POST['data_fim'] ?? '';
+    $cod_usuario = $idUsuarioLogado;
+
+    if (!$cod_carro || empty($data_inicio) || empty($data_fim) || $data_fim <= $data_inicio) {
+        header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $cod_carro . "&erro=" . urlencode("Datas inválidas."));
+        exit;
+    }
+
     $usuarioDAO = new UsuarioDAO();
     $usuario = $usuarioDAO->findById($idUsuarioLogado);
-    if ($usuario && $usuario['cadastro_completo'] == 0) {
-        $_SESSION['reserva_pendente_dados'] = $_POST; // Salva dados para completar cadastro
-        header("Location: " . BASE_URL . "/view/profile/completarCadastro.php");
+    if ($usuario && (int)$usuario['cadastro_completo'] === 0) {
+        $_SESSION['reserva_pendente'] = [
+            'carroId'     => $cod_carro,
+            'data_inicio' => $data_inicio,
+            'data_fim'    => $data_fim,
+        ];
+        header("Location: " . BASE_URL . "/view/profile/completarCadastro.php?clienteId=$idUsuarioLogado&carroId=$cod_carro");
         exit;
     }
 
-    // --- DADOS DA RESERVA ---
-    $cod_carro = filter_input(INPUT_POST, 'cod_carro', FILTER_VALIDATE_INT);
-    $cod_usuario = filter_input(INPUT_POST, 'cod_usuario', FILTER_VALIDATE_INT);
-    $data_inicio = $_POST['data_inicio'] ?? '';
-    $data_fim = $_POST['data_fim'] ?? '';
-
-    // Validação de campos obrigatórios e datas
-    if (!$cod_carro || !$cod_usuario || empty($data_inicio) || empty($data_fim) || $data_fim <= $data_inicio) {
-        $clienteIdParam = isset($_POST['clienteId']) ? "&clienteId=" . $_POST['clienteId'] : "";
-        header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $cod_carro . $clienteIdParam . "&erro=" . urlencode("Datas inválidas."));
-        exit;
-    }
-
-    // --- VALIDAÇÃO DE MÁXIMO 30 DIAS ---
-    $totalDias = (new DateTime($data_inicio))->diff(new DateTime($data_fim))->days; // Calcula diferença em dias
-    if ($totalDias > 30) {
-        $clienteIdParam = isset($_POST['clienteId']) ? "&clienteId=" . $_POST['clienteId'] : "";
-        header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $cod_carro . $clienteIdParam . "&erro=" . urlencode("A reserva não pode ultrapassar 30 dias."));
-        exit;
-    }
-
-    // --- VERIFICA DISPONIBILIDADE DO CARRO ---
     $reservaDAO = new ReservaDAO();
     if (!$reservaDAO->checkDisponibilidade($cod_carro, $data_inicio, $data_fim)) {
-        $clienteIdParam = isset($_POST['clienteId']) ? "&clienteId=" . $_POST['clienteId'] : "";
-        header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $cod_carro . $clienteIdParam . "&erro=" . urlencode("Este carro já está reservado neste período."));
+        header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $cod_carro . "&erro=" . urlencode("Este carro já está reservado neste período."));
         exit;
     }
 
-    // --- CÁLCULO DO VALOR ---
     $carroDAO = new CarroDAO();
     $carro = $carroDAO->findById($cod_carro);
-    $precoDiaria = $carro['preco_diaria'];
+    $precoDiaria = (float)$carro['preco_diaria'];
 
+    $totalDias = (new DateTime($data_inicio))->diff(new DateTime($data_fim))->days;
     $planoDAO = new PlanoDAO();
     $planos = $planoDAO->getAll();
-    $multiplicador = 1.0; // Valor padrão sem desconto
+
+    usort($planos, fn($a,$b) => (int)$b['dias_minimos'] <=> (int)$a['dias_minimos']);
+    $multiplicador = 1.0;
     foreach ($planos as $plano) {
-        if ($totalDias >= $plano['dias_minimos']) { // Aplica multiplicador se atingir mínimo de dias
-            $multiplicador = $plano['multiplicador_valor'];
+        if ($totalDias >= (int)$plano['dias_minimos']) {
+            $multiplicador = (float)$plano['multiplicador_valor'];
             break;
         }
     }
-    $valorTotal = $totalDias * $precoDiaria * $multiplicador; // Calcula valor final
+    $valorTotal = $totalDias * $precoDiaria * $multiplicador;
 
-    // --- CRIA DTO E SALVA RESERVA ---
     $reservaDTO = new ReservaDTO();
     $reservaDTO->setCodUsuario($cod_usuario);
     $reservaDTO->setCodCarro($cod_carro);
@@ -99,14 +87,21 @@ if ($acao === 'finalizar_reserva') {
     $reservaDTO->setDataFim($data_fim);
     $reservaDTO->setValorTotal($valorTotal);
 
-    if ($reservaDAO->create($reservaDTO)) {
-        // Se o perfil do usuário era apenas 'usuario', atualiza para 'cliente'
+    $novaReservaId = $reservaDAO->create($reservaDTO);
+
+    if ($novaReservaId) {
         if ($usuario['perfil'] === 'usuario') {
             $usuarioDAO->updateProfile($cod_usuario, 'cliente');
             $_SESSION['usuario']['perfil'] = 'cliente';
         }
-        $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Reserva realizada com sucesso!'];
-        header("Location: " . BASE_URL . "/public/index.php");
+        unset($_SESSION['reserva_pendente']);
+        $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Sua reserva foi confirmada com sucesso!'];
+
+        // --- LOG ---
+        $detalhes = "Usuário '{$nomeUsuarioLogado}' criou a reserva #{$novaReservaId} para o carro ID {$cod_carro}.";
+        registrarLog("CRIACAO_RESERVA", $detalhes, $cod_usuario);
+
+        header("Location: " . BASE_URL . "/view/reservas/minhasReservas.php");
     } else {
         $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao processar a reserva. Tente novamente.'];
         header("Location: " . BASE_URL . "/view/carros/index.php");
@@ -114,119 +109,129 @@ if ($acao === 'finalizar_reserva') {
     exit;
 }
 
-// --- AÇÕES DE GERENCIAMENTO (ADMIN) ---
-else if ($acao === 'mudar_status_ativa') {
-    $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
-    if ($cod_reserva) {
-        $reservaDAO = new ReservaDAO();
-        $reservaDAO->updateStatus($cod_reserva, 'ativa', 'alugado'); // Ativa a reserva e marca carro como alugado
-        $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Retirada confirmada. Reserva está ativa!'];
-    }
-    header("Location: " . BASE_URL . "/view/admin/reserva.php");
-    exit;
-}
-
-else if ($acao === 'mudar_status_concluida') {
-    $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
-    if ($cod_reserva) {
-        $reservaDAO = new ReservaDAO();
-        $reservaDAO->updateStatus($cod_reserva, 'concluida', 'disponivel'); // Conclui reserva e libera carro
-        $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Locação finalizada com sucesso!'];
-    }
-    header("Location: " . BASE_URL . "/view/admin/reserva.php");
-    exit;
-}
-
-else if ($acao === 'atualizar_reserva') {
-    $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
-    $cod_carro = filter_input(INPUT_POST, 'cod_carro', FILTER_VALIDATE_INT);
-    $data_inicio = $_POST['data_inicio'] ?? '';
-    $data_fim = $_POST['data_fim'] ?? '';
-    $status = $_POST['status'] ?? '';
-    
-    if (!$cod_reserva || !$cod_carro || empty($data_inicio) || empty($data_fim) || empty($status)) {
-        $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Dados inválidos para atualização.'];
-    } else {
-        // Recalcula valor da reserva com base no plano e dias
-        $carroDAO = new CarroDAO();
-        $carro = $carroDAO->findById($cod_carro);
-        $precoDiaria = $carro['preco_diaria'];
-        $totalDias = (new DateTime($data_inicio))->diff(new DateTime($data_fim))->days;
-        
-        $planoDAO = new PlanoDAO();
-        $planos = $planoDAO->getAll();
-        $multiplicador = 1.0;
-        foreach ($planos as $plano) {
-            if ($totalDias >= $plano['dias_minimos']) {
-                $multiplicador = $plano['multiplicador_valor'];
-                break;
-            }
-        }
-        $valorTotal = $totalDias * $precoDiaria * $multiplicador;
-
-        // Atualiza DTO
-        $reservaDTO = new ReservaDTO();
-        $reservaDTO->setCodReserva($cod_reserva);
-        $reservaDTO->setDataInicio($data_inicio);
-        $reservaDTO->setDataFim($data_fim);
-        $reservaDTO->setStatus($status);
-        $reservaDTO->setValorTotal($valorTotal);
-
-        $reservaDAO = new ReservaDAO();
-        if ($reservaDAO->update($reservaDTO)) {
-            $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Reserva atualizada com sucesso!'];
-        } else {
-            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao atualizar reserva.'];
-        }
-    }
-    header("Location: " . BASE_URL . "/view/admin/reserva.php");
-    exit;
-}
-
-else if ($acao === 'excluir_reserva') {
-    // Só admins ou gerentes podem excluir reservas
-    if (!in_array($_SESSION['usuario']['perfil'], ['admin', 'gerente'])) {
-        $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Você não tem permissão para excluir reservas.'];
-    } else {
+// -----------------------------
+// Demais ações administrativas (com logs)
+// -----------------------------
+$reservaDAO = new ReservaDAO();
+switch ($acao) {
+    case 'mudar_status_ativa':
         $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
-        if (!$cod_reserva) {
-            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'ID de reserva inválido.'];
-        } else {
-            $reservaDAO = new ReservaDAO();
-            if ($reservaDAO->delete($cod_reserva)) {
-                $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Reserva excluída com sucesso!'];
+        if ($cod_reserva) {
+            $reservaDAO->updateStatus($cod_reserva, 'ativa', 'alugado');
+            $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Retirada confirmada. Reserva está ativa!'];
+
+            // --- LOG ---
+            $detalhes = "Usuário '{$nomeUsuarioLogado}' marcou a reserva #{$cod_reserva} como ativa.";
+            registrarLog("MUDAR_STATUS_ATIVA", $detalhes);
+        }
+        header("Location: " . BASE_URL . "/view/admin/reserva.php");
+        exit;
+
+    case 'mudar_status_concluida':
+        $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
+        if ($cod_reserva) {
+            $reservaDAO->updateStatus($cod_reserva, 'concluida', 'disponivel');
+            $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Locação finalizada com sucesso!'];
+
+            // --- LOG ---
+            $detalhes = "Usuário '{$nomeUsuarioLogado}' marcou a reserva #{$cod_reserva} como concluída.";
+            registrarLog("MUDAR_STATUS_CONCLUIDA", $detalhes);
+        }
+        header("Location: " . BASE_URL . "/view/admin/reserva.php");
+        exit;
+
+    case 'atualizar_reserva':
+        $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
+        $cod_carro   = filter_input(INPUT_POST, 'cod_carro', FILTER_VALIDATE_INT);
+        $data_inicio = $_POST['data_inicio'] ?? '';
+        $data_fim    = $_POST['data_fim'] ?? '';
+        $status      = $_POST['status'] ?? '';
+
+        if ($cod_reserva && $cod_carro && $data_inicio && $data_fim && $status) {
+            $carro = (new CarroDAO())->findById($cod_carro);
+            $precoDiaria = (float)$carro['preco_diaria'];
+            $totalDias = (new DateTime($data_inicio))->diff(new DateTime($data_fim))->days;
+
+            $planos = (new PlanoDAO())->getAll();
+            usort($planos, fn($a,$b) => (int)$b['dias_minimos'] <=> (int)$a['dias_minimos']);
+            $multiplicador = 1.0;
+            foreach ($planos as $plano) {
+                if ($totalDias >= (int)$plano['dias_minimos']) {
+                    $multiplicador = (float)$plano['multiplicador_valor'];
+                    break;
+                }
+            }
+            $valorTotal = $totalDias * $precoDiaria * $multiplicador;
+
+            $reservaDTO = new ReservaDTO();
+            $reservaDTO->setCodReserva($cod_reserva);
+            $reservaDTO->setDataInicio($data_inicio);
+            $reservaDTO->setDataFim($data_fim);
+            $reservaDTO->setStatus($status);
+            $reservaDTO->setValorTotal($valorTotal);
+
+            if ($reservaDAO->update($reservaDTO)) {
+                $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Reserva atualizada com sucesso!'];
+
+                // --- LOG ---
+                $detalhes = "Usuário '{$nomeUsuarioLogado}' atualizou a reserva #{$cod_reserva}. Novo status: {$status}.";
+                registrarLog("ATUALIZACAO_RESERVA", $detalhes);
             } else {
-                $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao excluir reserva.'];
+                $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao atualizar reserva.'];
+            }
+        } else {
+            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Dados inválidos para atualização.'];
+        }
+        header("Location: " . BASE_URL . "/view/admin/reserva.php");
+        exit;
+
+    case 'excluir_reserva':
+        if (!in_array($_SESSION['usuario']['perfil'], ['admin', 'gerente'])) {
+            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Você não tem permissão para excluir reservas.'];
+        } else {
+            $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
+            if ($cod_reserva) {
+                if ($reservaDAO->delete($cod_reserva)) {
+                    $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Reserva excluída com sucesso!'];
+
+                    // --- LOG ---
+                    $detalhes = "Usuário '{$nomeUsuarioLogado}' excluiu permanentemente a reserva #{$cod_reserva}.";
+                    registrarLog("EXCLUSAO_RESERVA", $detalhes);
+                } else {
+                    $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao excluir reserva.'];
+                }
+            } else {
+                $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'ID de reserva inválido.'];
             }
         }
-    }
-    header("Location: " . BASE_URL . "/view/admin/reserva.php");
-    exit;
-}
+        header("Location: " . BASE_URL . "/view/admin/reserva.php");
+        exit;
 
-else if ($acao === 'cancelar_reserva') {
-    $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
-    $idUsuarioLogado = $_SESSION['usuario']['id'] ?? null;
+    case 'cancelar_reserva':
+        $cod_reserva = filter_input(INPUT_POST, 'cod_reserva', FILTER_VALIDATE_INT);
+        $reserva = $reservaDAO->findById($cod_reserva);
 
-    $reservaDAO = new ReservaDAO();
-    $reserva = $reservaDAO->findById($cod_reserva);
-
-    // Verificações de segurança:
-    if (!$reserva) {
-        $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Reserva não encontrada.'];
-    } else if ($reserva['cod_usuario'] != $idUsuarioLogado) {
-        $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Você não tem permissão para cancelar esta reserva.'];
-    } else if ($reserva['status'] !== 'pendente') {
-        $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Esta reserva não pode mais ser cancelada.'];
-    } else {
-        // Se tudo estiver certo, cancela a reserva
-        if ($reservaDAO->cancel($cod_reserva)) {
-            $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Reserva cancelada com sucesso!'];
+        if (!$reserva) {
+            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Reserva não encontrada.'];
+        } elseif ($reserva['cod_usuario'] != $idUsuarioLogado) {
+            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Você não tem permissão para cancelar esta reserva.'];
+        } elseif ($reserva['status'] !== 'pendente') {
+            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Esta reserva não pode mais ser cancelada.'];
         } else {
-            $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao cancelar a reserva.'];
+            if ($reservaDAO->cancel($cod_reserva)) {
+                $_SESSION['flash_message'] = ['type' => 'success', 'message' => 'Reserva cancelada com sucesso!'];
+
+                // --- LOG ---
+                $detalhes = "Usuário '{$nomeUsuarioLogado}' cancelou a reserva #{$cod_reserva}.";
+                registrarLog("CANCELAMENTO_RESERVA", $detalhes);
+            } else {
+                $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Erro ao cancelar a reserva.'];
+            }
         }
-    }
-    // Redireciona de volta para a lista de reservas do cliente
-    header("Location: " . BASE_URL . "/view/reservas/minhasReservas.php");
-    exit;
+        header("Location: " . BASE_URL . "/view/reservas/minhasReservas.php");
+        exit;
+
+    default:
+        header("Location: " . BASE_URL . "/view/carros/index.php");
+        exit;
 }

@@ -29,7 +29,11 @@ class UsuarioDAO {
             $stmt->bindValue(":cpf", $usuario->getCpf());
             $stmt->bindValue(":telefone", $usuario->getTelefone());
 
-            return $stmt->execute();
+            if ($stmt->execute()) {
+                return $this->pdo->lastInsertId();
+            }
+            return false;
+
         } catch (PDOException $e) {
             error_log("Erro ao criar usuário: " . $e->getMessage());
             return false;
@@ -39,15 +43,63 @@ class UsuarioDAO {
     /**
      * Retorna todos os usuários do banco.
      */
-    public function getAll() {
+    public function getAll($filtros = []) {
         try {
-            $sql = "SELECT * FROM tbl_usuarios ORDER BY nome ASC";
-            $stmt = $this->pdo->query($sql);
+            $sql = "SELECT * FROM tbl_usuarios";
+            $params = [];
+            $whereClauses = [];
+
+            // Filtro por termo de busca (nome ou e-mail)
+            if (!empty($filtros['busca'])) {
+                $whereClauses[] = "(nome LIKE :busca OR email LIKE :busca)";
+                $params[':busca'] = '%' . $filtros['busca'] . '%';
+            }
+
+            // Filtro por perfil
+            if (!empty($filtros['perfil'])) {
+                $whereClauses[] = "perfil = :perfil";
+                $params[':perfil'] = $filtros['perfil'];
+            }
+
+            // Filtro por status
+            if (!empty($filtros['status'])) {
+                $whereClauses[] = "status = :status";
+                $params[':status'] = $filtros['status'];
+            }
+
+            // Se houver alguma cláusula, une todas com "AND"
+            if (!empty($whereClauses)) {
+                $sql .= " WHERE " . implode(' AND ', $whereClauses);
+            }
+
+            $sql .= " ORDER BY nome ASC";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         } catch (PDOException $e) {
             error_log("Erro ao listar usuários: " . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * NOVO MÉTODO: Altera o status de um usuário (para 'inativo' ou 'ativo').
+     */
+    public function changeStatus($id, $status) {
+        try {
+            $sql = "UPDATE tbl_usuarios SET status = ? WHERE cod_usuario = ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$status, $id]);
+        } catch (PDOException $e) {
+            error_log("Erro ao alterar status do usuário: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function delete($id) {
+        return $this->changeStatus($id, 'inativo');
     }
 
     /**
@@ -68,7 +120,7 @@ class UsuarioDAO {
 
     public function findByEmail($email) {
         try {
-            $sql = "SELECT * FROM tbl_usuarios WHERE email = :email LIMIT 1";
+            $sql = "SELECT * FROM tbl_usuarios WHERE email = :email AND status = 'ativo' LIMIT 1";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':email', $email);
             $stmt->execute();
@@ -110,21 +162,6 @@ class UsuarioDAO {
             return $stmt->execute();
         } catch (PDOException $e) {
             error_log("Erro ao atualizar usuário: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Deleta um usuário do banco pelo seu ID.
-     */
-    public function delete($id) {
-        try {
-            $sql = "DELETE FROM tbl_usuarios WHERE cod_usuario = :id";
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Erro ao deletar usuário: " . $e->getMessage());
             return false;
         }
     }

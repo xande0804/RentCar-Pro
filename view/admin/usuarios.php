@@ -2,27 +2,31 @@
 require_once __DIR__ . '/../../config.php';
 $pageTitle = "Gerenciar Usuários";
 $jsFiles = ['management.js'];
-
 require_once __DIR__ . '/../layout/header.php';
 
-// --- SEGURANÇA E DADOS ---
 if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) {
     header("Location: " . BASE_URL . "/public/index.php?erro=" . urlencode("Acesso negado!"));
     exit;
 }
-
 require_once __DIR__ . '/../../model/dao/UsuarioDAO.php';
 $usuarioDAO = new UsuarioDAO();
-$usuarios = $usuarioDAO->getAll();
+
+// --- LÓGICA DE FILTROS ---
+$filtros = [
+    'busca' => $_GET['busca'] ?? '',
+    'perfil' => $_GET['perfil'] ?? '',
+    'status' => $_GET['status'] ?? ''
+];
+$usuarios = $usuarioDAO->getAll($filtros);
 ?>
 
 <div class="content-management">
     <div class="table-header">
         <h2>Gerenciamento de Usuários</h2>
-        <p>Adicione, edite e remova usuários do sistema.</p>
+        <p>Adicione, edite e filtre os usuários do sistema.</p>
     </div>
 
-    <?php
+    <?php 
     if (isset($_SESSION['flash_message'])) {
         $flashMessage = $_SESSION['flash_message'];
         $messageType = $flashMessage['type'] === 'success' ? 'alert-success' : 'alert-danger';
@@ -31,28 +35,58 @@ $usuarios = $usuarioDAO->getAll();
     }
     ?>
 
-    <div class="table-controls">
+    <div class="table-controls d-flex justify-content-between align-items-center mb-3">
+        
         <button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#createModal">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <span>Novo Usuário</span>
         </button>
+
+        <form action="view/admin/usuarios.php" method="GET" class="d-flex align-items-center gap-2">
+            <input type="search" name="busca" class="form-control form-control" placeholder="Buscar por nome ou e-mail..." value="<?= htmlspecialchars($filtros['busca']) ?>">
+            
+            <select name="perfil" class="form-select form-select">
+                <option value="">Todos os Perfis</option>
+                <option value="admin" <?= $filtros['perfil'] == 'admin' ? 'selected' : '' ?>>Admin</option>
+                <option value="gerente" <?= $filtros['perfil'] == 'gerente' ? 'selected' : '' ?>>Gerente</option>
+                <option value="funcionario" <?= $filtros['perfil'] == 'funcionario' ? 'selected' : '' ?>>Funcionário</option>
+                <option value="cliente" <?= $filtros['perfil'] == 'cliente' ? 'selected' : '' ?>>Cliente</option>
+                <option value="usuario" <?= $filtros['perfil'] == 'usuario' ? 'selected' : '' ?>>Usuário</option>
+            </select>
+
+            <select name="status" class="form-select form-select">
+                <option value="">Todos os Status</option>
+                <option value="ativo" <?= $filtros['status'] == 'ativo' ? 'selected' : '' ?>>Ativo</option>
+                <option value="inativo" <?= $filtros['status'] == 'inativo' ? 'selected' : '' ?>>Inativo</option>
+            </select>
+            
+            <button type="submit" class="btn btn-primary btn">Filtrar</button>
+            <a href="view/admin/usuarios.php" class="btn btn-outline-secondary btn" title="Limpar Filtros">X</a>
+        </form>
     </div>
 
     <div class="table-container">
         <table class="data-table">
             <thead>
-                <tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Perfil</th><th class="actions-header">Ações</th></tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Perfil</th>
+                    <th>Status</th>
+                    <th class="actions-header">Ações</th>
+                </tr>
             </thead>
             <tbody>
                 <?php if (empty($usuarios)): ?>
-                    <tr><td colspan="5" class="no-results">Nenhum usuário encontrado.</td></tr>
+                    <tr><td colspan="6" class="no-results">Nenhum usuário encontrado.</td></tr>
                 <?php else: ?>
                     <?php 
                         $idUsuarioLogado = $_SESSION['usuario']['id'];
                         $perfilUsuarioLogado = $_SESSION['usuario']['perfil'];
                     ?>
                     <?php foreach ($usuarios as $user): ?>
-                        <tr>
+                        <tr class="<?= $user['status'] == 'inativo' ? 'inativo' : '' ?>">
                             <td><?= htmlspecialchars($user['cod_usuario']) ?></td>
                             <td><?= htmlspecialchars($user['nome']) ?></td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
@@ -67,34 +101,64 @@ $usuarios = $usuarioDAO->getAll();
                                 ?>
                                 <span class="badge <?= $badgeClass ?>"><?= htmlspecialchars($perfilTexto) ?></span>
                             </td>
+                            <td>
+                                <span class="badge badge-<?= $user['status'] == 'ativo' ? 'success' : 'secondary' ?>">
+                                    <?= ucfirst($user['status']) ?>
+                                </span>
+                            </td>
                             <td class="actions">
                                 <?php
-                                $podeEditar = true; $podeExcluir = true; 
-                                $editClass = ''; $deleteClass = '';
-                                $editMessage = ''; $deleteMessage = '';
+                                $podeEditar = true; 
+                                $podeExcluir = true; 
+                                $editClass = ''; 
+                                $deleteClass = '';
+                                $editMessage = ''; 
+                                $deleteMessage = '';
 
                                 if ($perfilUsuarioLogado == 'funcionario') {
                                     if (in_array($user['perfil'], ['admin', 'gerente']) || ($user['perfil'] == 'funcionario' && $user['cod_usuario'] != $idUsuarioLogado)) {
-                                        $podeEditar = false; $editClass = 'disabled'; $editMessage = 'Permissão negada.';
+                                        $podeEditar = false; 
+                                        $editClass = 'disabled'; 
+                                        $editMessage = 'Permissão negada.';
                                     }
                                     if (in_array($user['perfil'], ['admin', 'gerente', 'funcionario'])) {
-                                        $podeExcluir = false; $deleteClass = 'disabled'; $deleteMessage = 'Permissão negada.';
+                                        $podeExcluir = false; 
+                                        $deleteClass = 'disabled'; 
+                                        $deleteMessage = 'Permissão negada.';
                                     }
                                 }
-                                
+
                                 if ($user['cod_usuario'] == $idUsuarioLogado) {
-                                    $podeExcluir = false; $deleteClass = 'disabled';
-                                    $deleteMessage = 'Você não pode excluir sua própria conta.';
+                                    $podeExcluir = false; 
+                                    $deleteClass = 'disabled';
+                                    $deleteMessage = 'Você não pode excluir ou desativar sua própria conta.';
                                 }
                                 ?>
-                                <button type="button" class="btn-action edit <?= $editClass ?>" data-bs-toggle="modal" data-bs-target="#editModal" 
-                                        data-id="<?= $user['cod_usuario'] ?>" data-nome="<?= $user['nome'] ?>" data-email="<?= $user['email'] ?>" data-perfil="<?= $user['perfil'] ?>"
-                                        data-message="<?= $editMessage ?>">Editar</button>
-                                
-                                <form action="controller/UsuarioControl.php" method="POST" style="display: inline;" onsubmit="if(this.querySelector('button').classList.contains('disabled')){ alert('<?= $deleteMessage ?>'); return false; } return confirm('Tem certeza?');">
-                                    <input type="hidden" name="acao" value="excluir"><input type="hidden" name="cod_usuario" value="<?= $user['cod_usuario'] ?>">
-                                    <button type="submit" class="btn-action delete <?= $deleteClass ?>" <?= !$podeExcluir ? 'disabled' : '' ?>>Excluir</button>
-                                </form>
+
+                                <?php if ($user['status'] == 'ativo'): ?>
+                                    <button type="button" class="btn-action edit <?= $editClass ?>" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editModal" 
+                                            data-id="<?= $user['cod_usuario'] ?>" 
+                                            data-nome="<?= htmlspecialchars($user['nome']) ?>" 
+                                            data-email="<?= htmlspecialchars($user['email']) ?>" 
+                                            data-perfil="<?= htmlspecialchars($user['perfil']) ?>" 
+                                            data-message="<?= $editMessage ?>">Editar</button>
+
+                                    <form action="controller/UsuarioControl.php" method="POST" style="display:inline;"
+                                          onsubmit="if(this.querySelector('button').classList.contains('disabled')){ alert('<?= $deleteMessage ?>'); return false; } return confirm('Tem certeza que deseja desativar este usuário?');">
+                                        <input type="hidden" name="acao" value="desativar">
+                                        <input type="hidden" name="cod_usuario" value="<?= $user['cod_usuario'] ?>">
+                                        <button type="submit" class="btn-action delete <?= $deleteClass ?>" <?= !$podeExcluir ? 'disabled' : '' ?>>Desativar</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form action="controller/UsuarioControl.php" method="POST" style="display:inline;"
+                                          onsubmit="return confirm('Tem certeza que deseja reativar este usuário?');">
+                                        <input type="hidden" name="acao" value="reativar">
+                                        <input type="hidden" name="cod_usuario" value="<?= $user['cod_usuario'] ?>">
+                                        <button type="submit" class="btn-action edit">Reativar</button>
+                                    </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -103,6 +167,7 @@ $usuarios = $usuarioDAO->getAll();
         </table>
     </div>
 </div>
+
 
 <div class="modal fade" id="createModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
     <div class="modal-header"><h5 class="modal-title">Criar Novo Usuário</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>

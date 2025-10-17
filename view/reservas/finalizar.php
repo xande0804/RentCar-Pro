@@ -3,68 +3,48 @@ require_once __DIR__ . '/../../config.php';
 $pageTitle = "Finalizar Reserva";
 require_once __DIR__ . '/../layout/header.php';
 
-// --- LÓGICA FLEXÍVEL DE ACESSO ---
 $carroId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $clienteId = filter_input(INPUT_GET, 'clienteId', FILTER_VALIDATE_INT);
 
-$usuarioParaReservaId = null;
-
-// Se estiver logado, usa o ID da sessão
-if (isset($_SESSION['usuario']['id'])) {
-    $usuarioParaReservaId = $_SESSION['usuario']['id'];
-} 
-// Se veio um cliente específico (caso funcionário selecione)
-elseif ($clienteId) {
-    $usuarioParaReservaId = $clienteId;
-}
-
-require_once __DIR__ . '/../../model/dao/UsuarioDAO.php';
-$usuarioDAO = new UsuarioDAO();
-
-
-if ($usuarioParaReservaId) {
-    $usuarioDaReserva = $usuarioDAO->findById($usuarioParaReservaId);
-
-    if ($usuarioDaReserva && $usuarioDaReserva['cadastro_completo'] == 0) {
-        $_SESSION['reserva_pendente'] = ['carroId' => $carroId, 'clienteId' => $usuarioParaReservaId];
-        header("Location: " . BASE_URL . "/view/profile/completarCadastro.php");
-        exit;
-    }
-}
-// --- FIM DA LÓGICA FLEXÍVEL DE ACESSO ---
+// Apenas identifica o usuário (não é usado para submissão final)
+$usuarioParaReservaId = $clienteId ?: ($_SESSION['usuario']['id'] ?? null);
 
 if (!$carroId) {
     header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Carro inválido."));
     exit;
 }
+
 require_once __DIR__ . '/../../model/dao/CarroDAO.php';
 $carroDAO = new CarroDAO();
 $carro = $carroDAO->findById($carroId);
+
 if (!$carro || $carro['status'] !== 'disponivel') {
     header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Este carro não está mais disponível."));
     exit;
 }
+
 require_once __DIR__ . '/../../model/dao/PlanoDAO.php';
 $planoDAO = new PlanoDAO();
 $planos = $planoDAO->getAll();
 ?>
-
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-sm">
                 <div class="card-header bg-light py-3">
-                    <h3>Finalizar Reserva</h3>
-                    <p class="mb-0">Confirme os detalhes e escolha o período da sua locação.</p>
+                    <h3>Realizar Reserva</h3>
+                    <p class="mb-0">Escolha o período da sua locação e avance para confirmar.</p>
                 </div>
                 <div class="card-body p-4">
-                    
-                    <?php if (isset($_GET['erro'])) { echo "<div class='alert alert-danger'>" . htmlspecialchars($_GET['erro']) . "</div>"; } ?>
-                    
+
+                    <?php if (isset($_GET['erro'])): ?>
+                        <div class='alert alert-danger'><?= htmlspecialchars($_GET['erro']) ?></div>
+                    <?php endif; ?>
+
                     <h4>Veículo Selecionado</h4>
                     <div class="row mb-4">
                         <div class="col-md-4">
-                             <img src="https://placehold.co/600x400/e2e8f0/cccccc?text=<?= urlencode($carro['marca']) ?>" class="img-fluid rounded">
+                            <img src="https://placehold.co/600x400/e2e8f0/cccccc?text=<?= urlencode($carro['marca']) ?>" class="img-fluid rounded" alt="carro">
                         </div>
                         <div class="col-md-8">
                             <h5><?= htmlspecialchars($carro['marca'] . ' ' . $carro['modelo']) ?></h5>
@@ -75,13 +55,12 @@ $planos = $planoDAO->getAll();
                             </ul>
                         </div>
                     </div>
-
                     <hr class="my-4">
 
-                    <form action="controller/ReservaControl.php" method="POST">
-                        <input type="hidden" name="acao" value="finalizar_reserva">
+                    <!-- PASSO: escolher datas → enviar para confirmar.php -->
+                    <form action="view/reservas/confirmar.php" method="POST">
                         <input type="hidden" name="cod_carro" value="<?= $carro['cod_carro'] ?>">
-                        <input type="hidden" name="cod_usuario" value="<?= $usuarioParaReservaId ?>">
+                        <!-- não envie cod_usuario; o servidor usa a sessão -->
                         <input type="hidden" id="preco_diaria" value="<?= $carro['preco_diaria'] ?>">
 
                         <h4 class="mb-3">Selecione o Período</h4>
@@ -105,7 +84,7 @@ $planos = $planoDAO->getAll();
 
                         <div class="text-end mt-4">
                             <a href="view/carros/index.php" class="btn btn-secondary btn-lg">Cancelar</a>
-                            <button type="submit" class="btn btn-primary btn-lg">Confirmar Reserva</button>
+                            <button type="submit" class="btn btn-primary btn-lg">Confirmar</button>
                         </div>
                     </form>
                 </div>
@@ -133,9 +112,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (dataInicioInput.value && dataFimInput.value && dataFim > dataInicio) {
             const diffTime = Math.abs(dataFim - dataInicio);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            // garante melhor plano (assume lista não ordenada)
+            const planosOrdenados = [...planos].sort((a,b) => parseInt(b.dias_minimos) - parseInt(a.dias_minimos));
             let multiplicador = 1.0;
             let planoNome = "Nenhum";
-            for (const plano of planos) {
+            for (const plano of planosOrdenados) {
                 if (diffDays >= parseInt(plano.dias_minimos)) {
                     multiplicador = parseFloat(plano.multiplicador_valor);
                     planoNome = plano.nome;

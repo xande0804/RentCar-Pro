@@ -24,87 +24,108 @@
 
 .car-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.car-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.car-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-}
-
-.car-card-image img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.car-card-content {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Faz este container crescer para ocupar o espaço */
-}
-
-.car-card-content h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 1rem;
-}
-
-.car-specs {
-    display: flex;
+    /* Ajustado para se adaptar melhor em várias telas, como na imagem de referência */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
-    color: #6b7280;
-    font-size: 0.85rem;
-    margin-bottom: 1.5rem;
 }
 
-.car-specs span {
-    display: inline-flex;
+/* --- Layout do Card Novo (baseado na imagem) --- */
+.car-card-new {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.car-card-new:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.07);
+}
+
+.car-card-img-container {
+    position: relative;
+}
+
+.car-card-img-container .btn-favorito {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.85);
+    display: flex;
     align-items: center;
-    gap: 0.4rem;
-}
-
-.car-price {
-    margin-top: auto; /* Empurra o preço e o botão para o fundo do card */
-    margin-bottom: 1.5rem;
-    color: #1f2937;
-    font-size: 1rem;
-}
-
-.car-price span {
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.btn-reservar {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #3b82f6;
-    color: #ffffff;
-    text-align: center;
+    justify-content: center;
+    color: #6b7280;
     text-decoration: none;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: background-color 0.2s ease;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
 }
 
-.btn-reservar:hover {
-    background-color: #2563eb;
+.car-card-img-container .btn-favorito:hover {
+    background-color: #fff;
+    transform: scale(1.08);
+    color: #ef4444; /* Vermelho no hover */
+}
+
+.car-card-img-container .btn-favorito.favorito-ativo {
+    color: #dc2626; /* Vermelho mais forte quando ativo */
+    background-color: #fff;
+    border-color: #fecaca;
+}
+
+.car-card-new .card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Garante que o corpo do card ocupe o espaço disponível */
+}
+
+.car-card-new .car-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #1f2937;
+}
+
+.car-card-new .car-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #3b82f6; /* Azul do preço */
+}
+
+.car-card-new .car-specs-main {
+    font-size: 0.85rem;
+    color: #6b7280;
+    white-space: nowrap; /* Impede quebra de linha */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.car-card-new .car-specs-details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.car-card-new .spec-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Faz o botão ficar no final do card */
+.car-card-new .card-body .mt-auto {
+    margin-top: auto;
+}
+
+.btn-details {
+    width: 100%;
+    font-weight: 600;
 }
 
 .no-cars-message {
@@ -112,5 +133,5 @@
     font-size: 1.2rem;
     color: #6b7280;
     padding: 4rem 0;
-    grid-column: 1 / -1; /* Faz a mensagem ocupar todas as colunas do grid */
+    grid-column: 1 / -1;
 }

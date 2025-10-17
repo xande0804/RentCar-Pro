@@ -65,8 +65,8 @@ if ($isNovoCliente) {
                 <h4 class="mb-3">Dados Pessoais</h4>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="cpf" class="form-label">CPF</label><input type="text" name="cpf" id="cpf" class="form-control" required>
-                        <small id="cpfError" class="form-text text-danger" style="display: none;">CPF inválido.</small>
+                        <label for="cpf" class="form-label">CPF/CNPJ</label><input type="text" name="cpf" id="cpf" class="form-control" required>
+                        <small id="cpfError" class="form-text text-danger" style="display: none;">CPF/CNPJ inválido.</small>
                     </div>
                     <div class="col-md-6 mb-3"><label for="telefone" class="form-label">Telefone</label><input type="text" name="telefone" id="telefone" class="form-control" required></div>
                 </div>

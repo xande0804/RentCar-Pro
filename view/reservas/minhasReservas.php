@@ -37,7 +37,7 @@ $reservas = $reservaDAO->getByUserId($_SESSION['usuario']['id']);
             <a href="view/carros/index.php" class="btn btn-primary mt-3">Ver Carros Disponíveis</a>
         </div>
     <?php else: ?>
-        <table class="table table-striped table-hover">
+        <table class="data-table table table-striped table-hover">
             <thead>
                 <tr><th>Carro</th><th>Período</th><th>Valor Total</th><th>Status</th><th class="actions-header">Ação</th></tr>
             </thead>
@@ -47,7 +47,9 @@ $reservas = $reservaDAO->getByUserId($_SESSION['usuario']['id']);
                         <td><?= htmlspecialchars($reserva['marca'] . ' ' . $reserva['modelo']) ?></td>
                         <td><?= date('d/m/Y', strtotime($reserva['data_inicio'])) ?> a <?= date('d/m/Y', strtotime($reserva['data_fim'])) ?></td>
                         <td>R$ <?= htmlspecialchars(number_format($reserva['valor_total'], 2, ',', '.')) ?></td>
-                        <td><span class="badge badge-<?= strtolower($reserva['status']) ?>"><?= ucfirst($reserva['status']) ?></span></td>
+                        <td>
+                            <span class="badge badge-<?= strtolower($reserva['status']) ?>"><?= ucfirst($reserva['status']) ?></span>
+                        </td>
                         <td class="actions">
                             <?php if ($reserva['status'] == 'pendente'): ?>
                                 <form action="controller/ReservaControl.php" method="POST" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva?');">

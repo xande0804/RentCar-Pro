@@ -3,21 +3,25 @@ $pageTitle = "Gerenciar Frota de Carros";
 require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../layout/header.php';
 
-// --- SEGURANÇA E DADOS ---
 if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) {
     header("Location: " . BASE_URL . "/public/index.php?erro=" . urlencode("Acesso negado!"));
     exit;
 }
-
 require_once __DIR__ . '/../../model/dao/CarroDAO.php';
 $carroDAO = new CarroDAO();
-$carros = $carroDAO->getAll();
+
+// --- LÓGICA DE FILTROS ---
+$filtros = [
+    'busca' => $_GET['busca'] ?? '',
+    'status' => $_GET['status'] ?? ''
+];
+$carros = $carroDAO->getAll($filtros);
 ?>
 
 <div class="content-management">
     <div class="table-header">
         <h2>Gerenciamento de Frota</h2>
-        <p>Adicione, edite e gerencie os veículos do sistema.</p>
+        <p>Adicione, edite e filtre os veículos do sistema.</p>
     </div>
 
     <?php
@@ -29,11 +33,26 @@ $carros = $carroDAO->getAll();
     }
     ?>
 
-    <div class="table-controls">
+    <div class="table-controls d-flex justify-content-between align-items-center mb-3">
         <button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#createCarModal">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <span>Novo Carro</span>
         </button>
+
+        <form action="view/admin/carros.php" method="GET" class="d-flex align-items-center gap-2">
+            <input type="search" name="busca" class="form-control" placeholder="Buscar por marca ou modelo..." value="<?= htmlspecialchars($filtros['busca']) ?>">
+            
+            <select name="status" class="form-select">
+                <option value="">Todos os Status</option>
+                <option value="disponivel" <?= $filtros['status'] == 'disponivel' ? 'selected' : '' ?>>Disponível</option>
+                <option value="reservado" <?= $filtros['status'] == 'reservado' ? 'selected' : '' ?>>Reservado</option>
+                <option value="alugado" <?= $filtros['status'] == 'alugado' ? 'selected' : '' ?>>Alugado</option>
+                <option value="manutencao" <?= $filtros['status'] == 'manutencao' ? 'selected' : '' ?>>Manutenção</option>
+            </select>
+            
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="view/admin/carros.php" class="btn btn-outline-secondary" title="Limpar Filtros">X</a>
+        </form>
     </div>
 
     <div class="table-container">

@@ -231,6 +231,20 @@
     color: #b91c1c;
 }
 
+.data-table .badge-success {
+    background-color: #dcfce7; /* Verde claro */
+    color: #166534;            /* Verde escuro */
+    border: 1px solid #16a34a; /* Borda verde média */
+    font-weight: 500;
+}
+
+/* Usuário Inativo (Cinza) */
+.data-table .badge-secondary {
+    background-color: #f3f4f6; /* Cinza claro */
+    color: #4b5563;            /* Cinza escuro */
+    border: 1px solid #9ca3af; /* Borda cinza média */
+    font-weight: 500;
+}
 
 .actions {
     display: flex;

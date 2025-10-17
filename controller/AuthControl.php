@@ -1,15 +1,14 @@
 <?php
-// Garante que a sessão seja iniciada para podermos manipular as variáveis
+// Garante que a sessão seja iniciada
 session_start();
 
-// Inclui o arquivo de configuração para termos acesso à BASE_URL
+// Inclui a configuração (que agora contém nossa função registrarLog)
 require_once __DIR__ . '/../config.php'; 
 
-// Inclui os arquivos necessários do Model
+// Inclui apenas os DAOs/DTOs que este controller usa diretamente
 require_once __DIR__ . "/../model/dto/UsuarioDTO.php";
 require_once __DIR__ . "/../model/dao/UsuarioDAO.php";
 
-// Pega a ação do formulário (seja por POST ou GET para o logout)
 $acao = $_POST['acao'] ?? $_GET['acao'] ?? '';
 
 // --- LÓGICA DE LOGIN ---
@@ -27,33 +26,32 @@ if ($acao === 'login') {
         $usuario = $usuarioDAO->findByEmail($email);
 
         if ($usuario && password_verify($senha, $usuario['senha'])) {
-            // Popula a sessão com os dados do usuário
+            // SUCESSO: Popula a sessão
             $_SESSION['usuario_logado'] = true;
             $_SESSION['usuario'] = [
                 'id'     => $usuario['cod_usuario'],
                 'nome'   => $usuario['nome'],
                 'email'  => $usuario['email'],
-                'perfil' => $usuario['perfil']
+                'perfil' => $usuario['perfil'] ?? 'usuario'
             ];
 
-    
-            // --- LÓGICA DE REDIRECIONAMENTO INTELIGENTE ---
-            if (isset($_SESSION['reserva_pendente_dados'])) {
-                $dadosReserva = $_SESSION['reserva_pendente_dados'];
-                unset($_SESSION['reserva_pendente_dados']); // Limpa a sessão
-                
-                // Remonta a URL da tela de finalização
-                $idCarro = $dadosReserva['cod_carro'];
-                header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=" . $idCarro);
-                exit;
+            // --- LOG SIMPLIFICADO ---
+            registrarLog("LOGIN_SUCESSO", "Usuário '{$usuario['nome']}' realizou login no sistema.");
+            
+            // Redireciona para a reserva pendente ou para a home
+            if (isset($_SESSION['reserva_pendente'])) {
+                header("Location: " . BASE_URL . "/view/reservas/confirmar.php");
+            } else {
+                header("Location: " . BASE_URL . "/public/index.php");
             }
-
-            // Se não havia reserva pendente, redireciona para a página inicial padrão.
-            header("Location: " . BASE_URL . "/public/index.php");
             exit;
 
         } else {
-            // Se a senha ou o email estiverem errados
+            // FALHA
+            $codUsuarioAlvo = $usuario['cod_usuario'] ?? null;
+            // --- LOG SIMPLIFICADO ---
+            registrarLog("LOGIN_FALHA", "Tentativa de login falhou para o e-mail '{$email}'.", $codUsuarioAlvo);
+
             header("Location: " . BASE_URL . "/view/auth/login.php?erro=" . urlencode("Usuário ou senha inválidos!"));
             exit;
         }
@@ -66,7 +64,6 @@ if ($acao === 'login') {
 
 // --- LÓGICA DE CADASTRO PÚBLICO ---
 else if ($acao === 'cadastrar') {
-    // A lógica de cadastro continua a mesma, mas usando a BASE_URL
     $nome = trim($_POST['nome'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $senha = $_POST["senha"] ?? "";
@@ -78,33 +75,50 @@ else if ($acao === 'cadastrar') {
         exit;
     }
 
-    $usuarioDAO = new UsuarioDAO();
-    if ($usuarioDAO->findByEmail($email)) {
-        header("Location: " . BASE_URL . "/view/auth/cadastroUsuario.php?erro=" . urlencode("Este e-mail já está em uso."));
+    try {
+        $usuarioDAO = new UsuarioDAO();
+        if ($usuarioDAO->findByEmail($email)) {
+            header("Location: " . BASE_URL . "/view/auth/cadastroUsuario.php?erro=" . urlencode("Este e-mail já está em uso."));
+            exit;
+        }
+        
+        $usuarioDTO = new UsuarioDTO();
+        $usuarioDTO->setNome($nome);
+        $usuarioDTO->setEmail($email);
+        $usuarioDTO->setSenha($senha);
+        $usuarioDTO->setPerfil('usuario');
+
+        // O método create() agora retorna o ID do novo usuário
+        $novoUsuarioId = $usuarioDAO->create($usuarioDTO);
+
+        if ($novoUsuarioId) {
+            // --- LOG SIMPLIFICADO ---
+            registrarLog("CADASTRO_PUBLICO", "Novo usuário '{$nome}' ({$email}) se cadastrou no sistema.", $novoUsuarioId);
+
+            header("Location: " . BASE_URL . "/view/auth/login.php?sucesso=" . urlencode("Cadastro realizado! Faça o login."));
+            exit;
+        } else {
+            header("Location: " . BASE_URL . "/view/auth/cadastroUsuario.php?erro=" . urlencode("Erro ao cadastrar."));
+            exit;
+        }
+    } catch (PDOException $e) {
+        error_log("Erro no cadastro: " . $e->getMessage());
+        header("Location: " . BASE_URL . "/view/auth/cadastroUsuario.php?erro=" . urlencode("Ocorreu um erro no sistema."));
         exit;
     }
-    
-    $usuarioDTO = new UsuarioDTO();
-    $usuarioDTO->setNome($nome);
-    $usuarioDTO->setEmail($email);
-    $usuarioDTO->setSenha($senha);
-    $usuarioDTO->setPerfil('usuario');
-
-    if ($usuarioDAO->create($usuarioDTO)) {
-        header("Location: " . BASE_URL . "/view/auth/login.php?sucesso=" . urlencode("Cadastro realizado! Faça o login."));
-    } else {
-        header("Location: " . BASE_URL . "/view/auth/cadastroUsuario.php?erro=" . urlencode("Erro ao cadastrar."));
-    }
-    exit;
 }
 
 // --- LÓGICA DE LOGOUT ---
 else if ($acao === 'logout') {
+    $nomeUsuarioLogado = $_SESSION['usuario']['nome'] ?? 'Desconhecido';
+    
+    // A função pega o ID do usuário da sessão automaticamente
+    registrarLog("LOGOUT", "Usuário '{$nomeUsuarioLogado}' realizou logout do sistema.");
+
     $_SESSION = [];
     session_destroy();
     
-    // Usando a BASE_URL para garantir o caminho absoluto
-    header("Location: " . BASE_URL . "/view/auth/login.php");
+    header("Location: " . BASE_URL . "/public/index.php");
     exit;
 }
 

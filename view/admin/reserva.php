@@ -4,9 +4,18 @@ require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../layout/header.php';
 
 if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) { exit; }
+
 require_once __DIR__ . '/../../model/dao/ReservaDAO.php';
 $reservaDAO = new ReservaDAO();
-$reservas = $reservaDAO->getAll();
+
+// --- LÓGICA DE FILTROS ---
+$filtros = [
+    'busca' => $_GET['busca'] ?? '',
+    'status' => $_GET['status'] ?? '',
+    'data_inicio' => $_GET['data_inicio'] ?? '',
+    'data_fim' => $_GET['data_fim'] ?? ''
+];
+$reservas = $reservaDAO->getAll($filtros);
 ?>
 
 <div class="content-management">
@@ -15,13 +24,39 @@ $reservas = $reservaDAO->getAll();
         <p>Visualize e gerencie todas as reservas do sistema.</p>
     </div>
     
-    <?php /* Bloco para exibir Flash Messages */ ?>
+    <?php 
+    if (isset($_SESSION['flash_message'])) {
+        $flashMessage = $_SESSION['flash_message'];
+        $messageType = $flashMessage['type'] === 'success' ? 'alert-success' : 'alert-danger';
+        echo "<div class='alert {$messageType}'>" . htmlspecialchars($flashMessage['message']) . "</div>";
+        unset($_SESSION['flash_message']);
+    }
+    ?>
 
-    <div class="table-controls">
+    <div class="table-controls d-flex justify-content-between align-items-center mb-3">
         <a href="view/carros/index.php" class="btn-add">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <span>Nova Reserva</span>
         </a>
+
+        <form action="view/admin/reserva.php" method="GET" class="d-flex align-items-center gap-2">
+            <input type="search" name="busca" class="form-control" placeholder="Buscar por cliente ou carro..." value="<?= htmlspecialchars($filtros['busca']) ?>">
+            
+            <select name="status" class="form-select">
+                <option value="">Todos os Status</option>
+                <option value="pendente" <?= $filtros['status'] == 'pendente' ? 'selected' : '' ?>>Pendente</option>
+                <option value="ativa" <?= $filtros['status'] == 'ativa' ? 'selected' : '' ?>>Ativa</option>
+                <option value="concluida" <?= $filtros['status'] == 'concluida' ? 'selected' : '' ?>>Concluída</option>
+                <option value="cancelada" <?= $filtros['status'] == 'cancelada' ? 'selected' : '' ?>>Cancelada</option>
+            </select>
+            
+            <input type="date" name="data_inicio" class="form-control" title="Data de início do período" value="<?= htmlspecialchars($filtros['data_inicio']) ?>">
+            
+            <input type="date" name="data_fim" class="form-control" title="Data de fim do período" value="<?= htmlspecialchars($filtros['data_fim']) ?>">
+            
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="view/admin/reserva.php" class="btn btn-outline-secondary" title="Limpar Filtros">X</a>
+        </form>
     </div>
 
     <div class="table-container">

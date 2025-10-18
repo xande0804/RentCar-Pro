@@ -1,7 +1,6 @@
 <?php
 $pageTitle = "Catálogo de Veículos - RentCar Pro";
 $jsFiles = ['reserva-admin.js'];
-require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../layout/header.php';
 
 require_once __DIR__ . '/../../model/dao/FavoritoDAO.php';

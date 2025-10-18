@@ -1,6 +1,9 @@
 <?php
+
+$perfisPermitidos = ['admin', 'gerente'];
+
 $pageTitle = "Logs de Auditoria";
-require_once __DIR__ . '/../../config.php';
+
 require_once __DIR__ . '/../layout/header.php';
 
 // SEGURANÇA: Apenas Admin e Gerente podem ver esta página

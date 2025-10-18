@@ -1,6 +1,6 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../config.php';
+$acessoApenasLogado = true;
+
 require_once __DIR__ . '/../layout/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

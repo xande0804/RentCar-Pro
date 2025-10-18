@@ -1,6 +1,9 @@
 <?php
+
+$perfisPermitidos = ['admin', 'gerente', 'funcionario'];
+
 $pageTitle = "Gerenciar Multas";
-require_once __DIR__ . '/../../config.php';
+
 require_once __DIR__ . '/../layout/header.php';
 
 // Segurança: Acesso restrito

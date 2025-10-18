@@ -1,11 +1,29 @@
 <?php
-// Garante que a sessão seja iniciada
+// Garante que a sessão seja iniciada em todas as páginas
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Lógica de sessão do nosso modelo simples
-$usuarioLogado = isset($_SESSION['usuario']);
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../middleware/AuthMiddleware.php';
+
+// O "Porteiro" entra em ação aqui.
+
+// 1. A página que incluiu este header definiu a variável $perfisPermitidos?
+if (isset($perfisPermitidos) && is_array($perfisPermitidos)) {
+    // Se sim, chama a verificação de perfil (que já verifica o login antes).
+    AuthMiddleware::checkProfile($perfisPermitidos);
+}
+// 2. Se não, a página definiu que precisa apenas de login (qualquer perfil)?
+else if (isset($acessoApenasLogado) && $acessoApenasLogado === true) {
+    // Se sim, chama a verificação básica de login.
+    AuthMiddleware::checkAuth();
+}
+// 3. Se nenhuma das variáveis foi definida, a página é pública e nada é feito.
+
+
+// Lógica normal para definir as variáveis de sessão para a view
+$usuarioLogado = !empty($_SESSION['usuario_logado']) && $_SESSION['usuario_logado'] === true;
 $usuarioNome = $_SESSION['usuario']['nome'] ?? '';
 $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
 ?>

@@ -1,6 +1,9 @@
 <?php
+
+$perfisPermitidos = ['admin', 'gerente', 'funcionario'];
+
 $pageTitle = "Gerenciar Frota de Carros";
-require_once __DIR__ . '/../../config.php';
+
 require_once __DIR__ . '/../layout/header.php';
 
 if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) {

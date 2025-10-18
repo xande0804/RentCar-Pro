@@ -1,13 +1,11 @@
 <?php
+
+$perfisPermitidos = ['admin', 'gerente', 'funcionario'];
+
 $pageTitle = "Gerenciar Reservas";
-require_once __DIR__ . '/../../config.php';
+
 require_once __DIR__ . '/../layout/header.php';
 
-// Segurança: Apenas funcionários e superiores podem acessar
-if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) { 
-    header("Location: " . BASE_URL . "/public/index.php?erro=" . urlencode("Acesso negado!"));
-    exit; 
-}
 
 require_once __DIR__ . '/../../model/dao/ReservaDAO.php';
 $reservaDAO = new ReservaDAO();

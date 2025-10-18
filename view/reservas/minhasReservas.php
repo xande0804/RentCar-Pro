@@ -1,13 +1,7 @@
 <?php
+$perfisPermitidos = ['cliente', 'usuario'];
 $pageTitle = "Minhas Reservas";
-require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../layout/header.php';
-
-// --- SEGURANÇA E DADOS ---
-if (!$usuarioLogado) {
-    header("Location: ". BASE_URL . "/view/auth/login.php");
-    exit;
-}
 
 require_once __DIR__ . '/../../model/dao/ReservaDAO.php';
 $reservaDAO = new ReservaDAO();

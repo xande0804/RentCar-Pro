@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config.php';
+$acessoApenasLogado = true;
 $pageTitle = "Finalizar Reserva";
 require_once __DIR__ . '/../layout/header.php';
 

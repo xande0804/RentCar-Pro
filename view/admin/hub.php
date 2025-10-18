@@ -1,14 +1,10 @@
 <?php
+
+$perfisPermitidos = ['admin', 'gerente', 'funcionario'];
+
 $pageTitle = "Painel de Gestão";
 
 require_once __DIR__ . '/../layout/header.php';
-
-// --- SEGURANÇA ---
-// A variável $usuarioPerfil é definida no header.php
-if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) {
-    header("Location: /public/index.php?erro=" . urlencode("Acesso negado!"));
-    exit;
-}
 ?>
 
 <div class="content-management">
@@ -58,7 +54,7 @@ if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) {
                 <p>Registre, edite e controle as multas de locação associadas aos clientes e reservas.</p>
             </div>
         </a>
-        
+
         <?php if (in_array($usuarioPerfil, ['admin', 'gerente'])): ?>
         <a href="view/admin/logs.php" class="hub-card">
             <div class="hub-card-icon">

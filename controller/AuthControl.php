@@ -34,9 +34,6 @@ if ($acao === 'login') {
                 'email'  => $usuario['email'],
                 'perfil' => $usuario['perfil'] ?? 'usuario'
             ];
-
-            // --- LOG SIMPLIFICADO ---
-            registrarLog("LOGIN_SUCESSO", "Usuário '{$usuario['nome']}' realizou login no sistema.");
             
             // Redireciona para a reserva pendente ou para a home
             if (isset($_SESSION['reserva_pendente'])) {
@@ -49,8 +46,6 @@ if ($acao === 'login') {
         } else {
             // FALHA
             $codUsuarioAlvo = $usuario['cod_usuario'] ?? null;
-            // --- LOG SIMPLIFICADO ---
-            registrarLog("LOGIN_FALHA", "Tentativa de login falhou para o e-mail '{$email}'.", $codUsuarioAlvo);
 
             header("Location: " . BASE_URL . "/view/auth/login.php?erro=" . urlencode("Usuário ou senha inválidos!"));
             exit;
@@ -92,8 +87,6 @@ else if ($acao === 'cadastrar') {
         $novoUsuarioId = $usuarioDAO->create($usuarioDTO);
 
         if ($novoUsuarioId) {
-            // --- LOG SIMPLIFICADO ---
-            registrarLog("CADASTRO_PUBLICO", "Novo usuário '{$nome}' ({$email}) se cadastrou no sistema.", $novoUsuarioId);
 
             header("Location: " . BASE_URL . "/view/auth/login.php?sucesso=" . urlencode("Cadastro realizado! Faça o login."));
             exit;
@@ -111,9 +104,6 @@ else if ($acao === 'cadastrar') {
 // --- LÓGICA DE LOGOUT ---
 else if ($acao === 'logout') {
     $nomeUsuarioLogado = $_SESSION['usuario']['nome'] ?? 'Desconhecido';
-    
-    // A função pega o ID do usuário da sessão automaticamente
-    registrarLog("LOGOUT", "Usuário '{$nomeUsuarioLogado}' realizou logout do sistema.");
 
     $_SESSION = [];
     session_destroy();

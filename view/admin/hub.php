@@ -49,6 +49,16 @@ if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) {
             </div>
         </a>
 
+        <a href="view/admin/multas.php" class="hub-card">
+            <div class="hub-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <div class="hub-card-content">
+                <h3>Gerenciar Multas</h3>
+                <p>Registre, edite e controle as multas de locação associadas aos clientes e reservas.</p>
+            </div>
+        </a>
+        
         <?php if (in_array($usuarioPerfil, ['admin', 'gerente'])): ?>
         <a href="view/admin/logs.php" class="hub-card">
             <div class="hub-card-icon">
@@ -60,7 +70,6 @@ if (!in_array($usuarioPerfil, ['admin', 'gerente', 'funcionario'])) {
             </div>
         </a>
         <?php endif; ?>
-
     </div>
 </div>
 

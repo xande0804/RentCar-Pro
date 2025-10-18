@@ -146,6 +146,7 @@ switch ($acao) {
         $data_inicio = $_POST['data_inicio'] ?? '';
         $data_fim    = $_POST['data_fim'] ?? '';
         $status      = $_POST['status'] ?? '';
+        $valor_total = str_replace(',', '.', $_POST['valor_total'] ?? 0);
 
         if ($cod_reserva && $cod_carro && $data_inicio && $data_fim && $status) {
             $carro = (new CarroDAO())->findById($cod_carro);

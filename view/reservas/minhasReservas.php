@@ -42,15 +42,43 @@ $reservas = $reservaDAO->getByUserId($_SESSION['usuario']['id']);
                         <td><?= date('d/m/Y', strtotime($reserva['data_inicio'])) ?> a <?= date('d/m/Y', strtotime($reserva['data_fim'])) ?></td>
                         <td>R$ <?= htmlspecialchars(number_format($reserva['valor_total'], 2, ',', '.')) ?></td>
                         <td>
-                            <span class="badge badge-<?= strtolower($reserva['status']) ?>"><?= ucfirst($reserva['status']) ?></span>
+                            <?php
+                            $status = $reserva['status'];
+                            $badgeClass = strtolower($status);
+                            $statusTexto = ucfirst($status);
+
+                            if ($status === 'pendente') {
+                                $badgeClass = 'pendente'; 
+                                $statusTexto = 'Aguardando Pagamento';
+                            } elseif ($status === 'aguardando_retirada') {
+                                $badgeClass = 'ativa'; 
+                                $statusTexto = 'Aguardando Retirada';
+                            } elseif ($status === 'ativa') {
+                                $badgeClass = 'alugado'; 
+                                $statusTexto = 'Em Andamento';
+                            } elseif ($status === 'concluida') {
+                                $badgeClass = 'concluida';
+                                $statusTexto = 'Concluída';
+                            } elseif ($status === 'cancelada') {
+                                $badgeClass = 'cancelada';
+                                $statusTexto = 'Cancelada';
+                            }
+                            ?>
+                            <span class="badge badge-<?= $badgeClass ?>"><?= $statusTexto ?></span>
                         </td>
                         <td class="actions">
                             <?php if ($reserva['status'] == 'pendente'): ?>
-                                <form action="controller/ReservaControl.php" method="POST" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva?');">
+                                
+                                <a href="view/reservas/pagamento.php?id=<?= $reserva['cod_reserva'] ?>" class="btn-action edit">
+                                    Pagar
+                                </a>
+
+                                <form action="controller/ReservaControl.php" method="POST" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva?');" style="display: inline-block;">
                                     <input type="hidden" name="acao" value="cancelar_reserva">
                                     <input type="hidden" name="cod_reserva" value="<?= $reserva['cod_reserva'] ?>">
                                     <button type="submit" class="btn-action delete">Cancelar</button>
                                 </form>
+
                             <?php else: ?>
                                 <span>--</span>
                             <?php endif; ?>

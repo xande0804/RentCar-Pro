@@ -72,7 +72,6 @@ $usuarios = $usuarioDAO->getAll($filtros);
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nome</th>
                     <th>E-mail</th>
                     <th>Perfil</th>
@@ -90,7 +89,6 @@ $usuarios = $usuarioDAO->getAll($filtros);
                     ?>
                     <?php foreach ($usuarios as $user): ?>
                         <tr class="<?= $user['status'] == 'inativo' ? 'inativo' : '' ?>">
-                            <td><?= htmlspecialchars($user['cod_usuario']) ?></td>
                             <td><?= htmlspecialchars($user['nome']) ?></td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
                             <td>
@@ -174,7 +172,7 @@ $usuarios = $usuarioDAO->getAll($filtros);
 
 <div class="modal fade" id="createModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
     <div class="modal-header"><h5 class="modal-title">Criar Novo Usuário</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form action="controller/UsuarioControl.php" method="POST">
+    <form action="controller/UsuarioControl.php" method="POST" class="form-loading-feedback">
         <div class="modal-body">
             <div id="createError" class="alert alert-danger d-none"></div>
             <input type="hidden" name="acao" value="admin_cadastrar">
@@ -196,7 +194,7 @@ $usuarios = $usuarioDAO->getAll($filtros);
 
 <div class="modal fade" id="editModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
     <div class="modal-header"><h5 class="modal-title">Editar Usuário</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-    <form id="editForm" action="controller/UsuarioControl.php" method="POST">
+    <form id="editForm" action="controller/UsuarioControl.php" method="POST" class="form-loading-feedback">
         <div class="modal-body">
             <div id="editError" class="alert alert-danger d-none"></div>
             <input type="hidden" name="acao" value="atualizar"><input type="hidden" id="edit-id" name="cod_usuario">

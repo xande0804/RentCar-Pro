@@ -216,6 +216,11 @@
     color: #065f46;
 }
 
+.data-table .badge-aguardando_retirada {
+    background-color: #ffffff; 
+    color: #00a5b4;
+}
+
 .data-table .badge-reservado {
     background-color: #fff3cd;
     color: #856404;

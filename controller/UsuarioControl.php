@@ -134,9 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (!validaCPF($cpf)) {
-            $carroIdPendente = $_POST['carroId'] ?? null;
-            $redirectBack = $carroIdPendente ? "&carroId=$carroIdPendente" : "";
-            header("Location: " . BASE_URL . "/view/profile/completarCadastro.php?clienteId=$idUsuarioParaCompletar$redirectBack&erro=" . urlencode("CPF inválido."));
+            $cod_carroPendente = $_POST['cod_carro'] ?? null;
+            $redirectBack = $cod_carroPendente ? "&cod_carro=$cod_carroPendente" : "";
+            header("Location: " . BASE_URL . "/view/profile/completarCadastro.php?cod_usuario=$idUsuarioParaCompletar$redirectBack&erro=" . urlencode("CPF inválido."));
             exit;
         }
 
@@ -162,9 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             header("Location: " . BASE_URL . "/view/carros/index.php?sucesso=" . urlencode("Cadastro completo com sucesso!"));
         } else {
-            $carroIdPendente = $_POST['carroId'] ?? null;
-            $redirectBack = $carroIdPendente ? "&carroId=$carroIdPendente" : "";
-            header("Location: " . BASE_URL . "/view/profile/completarCadastro.php?clienteId=$idUsuarioParaCompletar$redirectBack&erro=" . urlencode("Erro ao salvar os dados."));
+            $cod_carroPendente = $_POST['cod_carro'] ?? null;
+            $redirectBack = $cod_carroPendente ? "&cod_carro=$cod_carroPendente" : "";
+            header("Location: " . BASE_URL . "/view/profile/completarCadastro.php?cod_usuario=$idUsuarioParaCompletar$redirectBack&erro=" . urlencode("Erro ao salvar os dados."));
         }
         exit;
     }

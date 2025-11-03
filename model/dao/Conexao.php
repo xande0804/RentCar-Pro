@@ -9,8 +9,8 @@ class Conexao {
             try {
                 self::$instance = new PDO(
                     "mysql:host=localhost;port=3308;dbname=locarbd;charset=utf8mb4",
-                    "root", // usuário do MySQL
-                    "",     // senha do MySQL
+                    "root", 
+                    "",     
                     [
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

@@ -18,6 +18,8 @@ $filtros = [
     'data_fim' => $_GET['data_fim'] ?? ''
 ];
 $reservas = $reservaDAO->getAll($filtros);
+
+
 ?>
 
 <div class="content-management">
@@ -51,6 +53,8 @@ $reservas = $reservaDAO->getAll($filtros);
                 <option value="">Todos os Status</option>
                 <option value="pendente" <?= $filtros['status'] == 'pendente' ? 'selected' : '' ?>>Pendente</option>
                 <option value="ativa" <?= $filtros['status'] == 'ativa' ? 'selected' : '' ?>>Ativa</option>
+                <option value="aguardando_pagamento" <?= $filtros['status'] == 'aguardando_pagamento' ? 'selected' : '' ?>>Aguardando pagamento</option>
+                <option value="aguardando_retirada" <?= $filtros['status'] == 'aguardando_retirada' ? 'selected' : '' ?>>Aguardando Retirada</option>
                 <option value="concluida" <?= $filtros['status'] == 'concluida' ? 'selected' : '' ?>>Concluída</option>
                 <option value="cancelada" <?= $filtros['status'] == 'cancelada' ? 'selected' : '' ?>>Cancelada</option>
             </select>
@@ -88,23 +92,62 @@ $reservas = $reservaDAO->getAll($filtros);
                             <td><?= htmlspecialchars($reserva['marca'] . ' ' . $reserva['modelo']) ?></td>
                             <td><?= date('d/m/Y', strtotime($reserva['data_inicio'])) ?> a <?= date('d/m/Y', strtotime($reserva['data_fim'])) ?></td>
                             <td>R$ <?= htmlspecialchars(number_format($reserva['valor_total'], 2, ',', '.')) ?></td>
-                            <td><span class="badge badge-<?= strtolower($reserva['status']) ?>"><?= ucfirst($reserva['status']) ?></span></td>
+                            <td>
+                                <?php
+                                $status = $reserva['status'];
+                                $label = $status;
+
+                                if ($status === 'aguardando_retirada') {
+                                    $label = 'Aguardando Retirada';
+                                } else {
+                                    // deixa só a primeira letra maiúscula
+                                    $label = ucfirst($status);
+                                }
+                                ?>
+                                <span class="badge badge-<?= strtolower($status) ?>">
+                                    <?= $label ?>
+                                </span>
+                            </td>
+
                             <td class="actions">
-                                
-                                <?php if ($reserva['status'] === 'concluida'): ?>
-                                    <a href="view/admin/multas.php?cod_reserva=<?= $reserva['cod_reserva'] ?>" class="btn-action" style="background-color: #ffc107; color: white;">Multa</a>
+                                <?php 
+                                // 🔹 Botão "Entregar / Iniciar" aparece quando a reserva está aguardando retirada
+                                if ($reserva['status'] === 'aguardando_retirada'): ?>
+                                    <form action="controller/ReservaControl.php" method="POST" class="d-inline">
+                                        <input type="hidden" name="acao" value="mudar_status_ativa">
+                                        <input type="hidden" name="cod_reserva" value="<?= $reserva['cod_reserva'] ?>">
+                                        <button type="submit" class="btn-action" style="background-color: #28a745; color: #fff;">
+                                            Entregar
+                                        </button>
+                                    </form>
                                 <?php endif; ?>
 
-                                <button type="button" class="btn-action edit" data-bs-toggle="modal" data-bs-target="#editReservaModal"
+                                <?php if ($reserva['status'] === 'concluida'): ?>
+                                    <a href="view/admin/multas.php?cod_reserva=<?= $reserva['cod_reserva'] ?>" 
+                                    class="btn-action" 
+                                    style="background-color: #ffc107; color: white;">
+                                    Multa
+                                    </a>
+                                <?php endif; ?>
+
+                                <button type="button" 
+                                        class="btn-action edit" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editReservaModal"
                                         data-id="<?= $reserva['cod_reserva'] ?>"
                                         data-cod-carro="<?= $reserva['cod_carro'] ?>"
                                         data-inicio="<?= date('Y-m-d', strtotime($reserva['data_inicio'])) ?>"
                                         data-fim="<?= date('Y-m-d', strtotime($reserva['data_fim'])) ?>"
                                         data-valor="<?= number_format($reserva['valor_total'], 2, ',', '.') ?>"
-                                        data-status="<?= $reserva['status'] ?>">Editar</button>
-                                
+                                        data-status="<?= $reserva['status'] ?>">
+                                    Editar
+                                </button>
+
                                 <?php if (in_array($usuarioPerfil, ['admin', 'gerente'])): ?>
-                                    <form action="controller/ReservaControl.php" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta reserva?');">
+                                    <form action="controller/ReservaControl.php" 
+                                        method="POST" 
+                                        class="d-inline" 
+                                        onsubmit="return confirm('Tem certeza que deseja excluir esta reserva?');">
                                         <input type="hidden" name="acao" value="excluir_reserva">
                                         <input type="hidden" name="cod_reserva" value="<?= $reserva['cod_reserva'] ?>">
                                         <button type="submit" class="btn-action delete">Excluir</button>
@@ -126,8 +169,11 @@ $reservas = $reservaDAO->getAll($filtros);
                 <h5 class="modal-title">Editar Reserva</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="editReservaForm" action="controller/ReservaControl.php" method="POST">
+            <form id="editReservaForm" action="controller/ReservaControl.php" method="POST" class="form-loading-feedback">
                 <div class="modal-body">
+                    <p id="aviso-pago" class="alert alert-info py-2 px-3" style="display:none; font-size:.85rem;">
+                        Esta reserva já está paga e aguardando retirada.
+                    </p>
                     <input type="hidden" name="acao" value="atualizar_reserva">
                     <input type="hidden" id="edit-id-reserva" name="cod_reserva">
                     <input type="hidden" id="edit-cod-carro" name="cod_carro">
@@ -143,6 +189,7 @@ $reservas = $reservaDAO->getAll($filtros);
                         <label for="edit-status-reserva" class="form-label">Status</label>
                         <select id="edit-status-reserva" name="status" class="form-select" required>
                             <option value="pendente">Pendente</option>
+                            <option value="aguardando_retirada">Aguardando Retirada</option>
                             <option value="ativa">Ativa</option>
                             <option value="concluida">Concluída</option>
                             <option value="cancelada">Cancelada</option>
@@ -183,6 +230,17 @@ document.addEventListener('DOMContentLoaded', function() {
             form.querySelector('#edit-valor-total').value = valor;
             form.querySelector('#edit-status-reserva').value = status;
         });
+    }
+    const statusSelect = form.querySelector('#edit-status-reserva');
+    statusSelect.value = status;
+
+    const avisoPago = form.querySelector('#aviso-pago');
+    if (avisoPago) {
+    if (status === 'aguardando_retirada') {
+        avisoPago.style.display = 'block';
+    } else {
+        avisoPago.style.display = 'none';
+    }
     }
 });
 </script>

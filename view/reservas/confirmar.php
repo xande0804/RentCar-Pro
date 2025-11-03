@@ -1,84 +1,82 @@
 <?php
 $acessoApenasLogado = true;
-
+$pageTitle = "Confirmar Reserva";
 require_once __DIR__ . '/../layout/header.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $cod_carro   = filter_input(INPUT_POST, 'cod_carro', FILTER_VALIDATE_INT);
-    $data_inicio = $_POST['data_inicio'] ?? '';
-    $data_fim    = $_POST['data_fim'] ?? '';
-
-    if (!$cod_carro || empty($data_inicio) || empty($data_fim) || $data_fim <= $data_inicio) {
-        header("Location: " . BASE_URL . "/view/reservas/finalizar.php?id=$cod_carro&erro=" . urlencode("Datas inválidas."));
-        exit;
-    }
-
-    // Se não logado → guarda intenção e manda logar
-    if (empty($_SESSION['usuario']['id'])) {
-        $_SESSION['reserva_pendente'] = [
-            'carroId'     => $cod_carro,
-            'data_inicio' => $data_inicio,
-            'data_fim'    => $data_fim,
-        ];
-        header("Location: " . BASE_URL . "/view/auth/login.php?erro=" . urlencode("Você precisa fazer login para continuar."));
-        exit;
-    }
-
-    $cod_usuario = $_SESSION['usuario']['id'];
-}
-elseif (isset($_SESSION['reserva_pendente'])) {
-    // Voltando do login/completar cadastro
-    $dados = $_SESSION['reserva_pendente'];
-    $cod_carro   = $dados['carroId'] ?? null;
-    $data_inicio = $dados['data_inicio'] ?? '';
-    $data_fim    = $dados['data_fim'] ?? '';
-
-    if (empty($_SESSION['usuario']['id'])) {
-        header("Location: " . BASE_URL . "/view/auth/login.php");
-        exit;
-    }
-    $cod_usuario = $_SESSION['usuario']['id'];
-} else {
-    header("Location: " . BASE_URL . "/view/carros/index.php");
+// 1) Esta página SÓ funciona se houver uma reserva_pendente na sessão.
+// Se não houver, o usuário não tem nada para confirmar.
+if (empty($_SESSION['reserva_pendente'])) {
+    header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Nenhuma reserva para confirmar."));
     exit;
 }
 
-// Carrega usuário e verifica cadastro completo
+// 2) Se a sessão existe, carregamos os dados dela.
+$dadosSessao = $_SESSION['reserva_pendente'];
+
+$cod_carro   = isset($dadosSessao['cod_carro']) ? (int)$dadosSessao['cod_carro'] : null;
+$data_inicio = $dadosSessao['data_inicio'] ?? '';
+$data_fim    = $dadosSessao['data_fim'] ?? '';
+
+// Define o "dono" da reserva (o cliente ou o próprio usuário logado)
+$cod_usuario = isset($dadosSessao['cod_usuario'])
+    ? (int)$dadosSessao['cod_usuario']         // Cliente escolhido por Staff
+    : (int)$_SESSION['usuario']['id'];      // Cliente comum
+
+// Se por algum motivo os dados da sessão estiverem corrompidos, volta.
+if (!$cod_carro || empty($data_inicio) || empty($data_fim) || $data_fim <= $data_inicio) {
+    header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Dados da reserva inválidos."));
+    exit;
+}
+
+/** Carrega dados do usuário “dono” da reserva */
 require_once __DIR__ . '/../../model/dao/UsuarioDAO.php';
 $usuarioDAO = new UsuarioDAO();
 $usuarioDaReserva = $usuarioDAO->findById($cod_usuario);
-
-if ($usuarioDaReserva && (int)$usuarioDaReserva['cadastro_completo'] === 0) {
-    $_SESSION['reserva_pendente'] = [
-        'carroId'     => $cod_carro,
-        'data_inicio' => $data_inicio,
-        'data_fim'    => $data_fim,
-    ];
-    header("Location: " . BASE_URL . "/view/profile/completarCadastro.php?clienteId=$cod_usuario&carroId=$cod_carro");
+if (!$usuarioDaReserva) {
+    header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Usuário da reserva não encontrado."));
     exit;
 }
 
-// Carro e cálculo
+// Se cadastro incompleto, garante redirecionamento para completar (por segurança)
+if ((int)$usuarioDaReserva['cadastro_completo'] === 0) {
+    // (A sessão reserva_pendente já está correta, não precisa re-salvar)
+    header("Location: " . BASE_URL . "/view/profile/completarCadastro.php?cod_usuario=$cod_usuario&cod_carro=$cod_carro");
+    exit;
+}
+
+/** Carrega dados do carro */
 require_once __DIR__ . '/../../model/dao/CarroDAO.php';
 $carroDAO = new CarroDAO();
 $carro = $carroDAO->findById($cod_carro);
-
-$totalDias = (new DateTime($data_inicio))->diff(new DateTime($data_fim))->days;
-
-require_once __DIR__ . '/../../model/dao/PlanoDAO.php';
-$planoDAO = new PlanoDAO();
-$planos = $planoDAO->getAll();
-usort($planos, fn($a,$b) => (int)$b['dias_minimos'] <=> (int)$a['dias_minimos']);
-
-$multiplicador = 1.0;
-foreach ($planos as $plano) {
-    if ($totalDias >= (int)$plano['dias_minimos']) {
-        $multiplicador = (float)$plano['multiplicador_valor'];
-        break;
-    }
+if (!$carro) { // Não precisa checar status aqui, o check final é no Controller
+    header("Location: " . BASE_URL . "/view/carros/index.php?erro=" . urlencode("Carro não encontrado."));
+    exit;
 }
-$valorTotal = $totalDias * (float)$carro['preco_diaria'] * $multiplicador;
+
+$totalDias = (int)$dadosSessao['total_dias'];
+$valorTotal = (float)$dadosSessao['total_estimado'];
+$extras = $dadosSessao['extras']; // Array de extras
+
+// Determina o nome do plano para exibição
+$planoAplicadoNome = "KM Ilimitado";
+if ($dadosSessao['plano']['tipo'] === 'limitado') {
+    $planoAplicadoNome = "KM Limitado ({$dadosSessao['plano']['km_limite']} km/dia)";
+}
 ?>
+
+<div class="step-header-wrapper">
+  <nav class="step-breadcrumb">
+    <a href="<?= BASE_URL ?>/view/carros/index.php">Catálogo</a>
+    <span class="sep">›</span>
+    <a href="<?= BASE_URL ?>/view/reservas/finalizar.php?id=<?= (int)$carro['cod_carro'] ?>">
+      <?= htmlspecialchars($carro['marca'] . ' ' . $carro['modelo']) ?>
+    </a>
+    <span class="sep">›</span>
+    <span class="active">Confirmar</span>
+  </nav>
+</div>
+
+
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -116,6 +114,10 @@ $valorTotal = $totalDias * (float)$carro['preco_diaria'] * $multiplicador;
                             Total de Dias:
                             <strong><?= $totalDias ?></strong>
                         </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            Plano aplicado:
+                            <strong><?= htmlspecialchars($planoAplicadoNome) ?></strong>
+                        </li>
                     </ul>
 
                     <div class="d-flex justify-content-between align-items-center bg-light p-3 mt-3 rounded">
@@ -125,7 +127,7 @@ $valorTotal = $totalDias * (float)$carro['preco_diaria'] * $multiplicador;
 
                     <hr>
 
-                    <h4 class="mb-3 mt-4">Seus Dados</h4>
+                    <h4 class="mb-3 mt-4">Dados do Cliente</h4>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                             Nome: <strong><?= htmlspecialchars($usuarioDaReserva['nome']) ?></strong>
@@ -136,11 +138,16 @@ $valorTotal = $totalDias * (float)$carro['preco_diaria'] * $multiplicador;
                     </ul>
 
                     <!-- PASSO FINAL: manda para o controller criar a reserva -->
-                    <form action="controller/reservaControl.php" method="POST" class="mt-5">
+                    <form action="controller/ReservaControl.php" method="POST" class="mt-5">
                         <input type="hidden" name="acao" value="finalizar_reserva">
                         <input type="hidden" name="cod_carro" value="<?= $cod_carro ?>">
                         <input type="hidden" name="data_inicio" value="<?= htmlspecialchars($data_inicio) ?>">
                         <input type="hidden" name="data_fim" value="<?= htmlspecialchars($data_fim) ?>">
+
+                        <?php if (!empty($_SESSION['reserva_pendente']['cod_usuario'])): ?>
+                            <!-- Reserva iniciada por staff em nome de um cliente -->
+                            <input type="hidden" name="cod_usuario" value="<?= (int)$_SESSION['reserva_pendente']['cod_usuario'] ?>">
+                        <?php endif; ?>
 
                         <div class="d-flex justify-content-end gap-2">
                             <a href="view/reservas/finalizar.php?id=<?= $cod_carro ?>" class="btn btn-secondary btn-lg">Voltar e alterar datas</a>

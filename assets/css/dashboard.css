@@ -1,6 +1,8 @@
 /* --- ESTILOS DA IMAGEM DE BANNER PRINCIPAL (topo.jpg) --- */
 .main-banner-image {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/image.jpg'); /* Caminho da imagem */
+    background-image: linear-gradient(
+    rgba(0, 11, 42, 0.23),rgba(0, 15, 56, 0.23)), 
+    url('../img/image.jpg');
     background-size: cover; /* Faz a imagem cobrir toda a área */
     background-position: center center; /* Centraliza a imagem */
     background-repeat: no-repeat;

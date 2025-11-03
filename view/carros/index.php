@@ -146,6 +146,51 @@ $carrosFavoritados = $usuarioLogado ? $favoritoDAO->getFavoritosByUsuario($_SESS
     </div>
 </div>
 
+<?php
+// só mostra o modal se for staff
+$perfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
+if (in_array($perfil, ['admin','gerente','funcionario'])):
+?>
+<!-- Modal: selecionar cliente para reserva -->
+<div class="modal fade" id="selecionarClienteModal" tabindex="-1" aria-labelledby="selecionarClienteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="selecionarClienteModalLabel">Selecionar cliente para a reserva</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-3 text-muted" style="font-size: .875rem;">
+          Você está criando uma reserva em nome de um cliente. Escolha abaixo o cliente que vai alugar este carro.
+        </p>
+
+        <!-- campo de busca -->
+        <div class="mb-3">
+          <label for="search-cliente-modal" class="form-label">Buscar cliente</label>
+          <input type="text" id="search-cliente-modal" class="form-control" placeholder="Digite o nome ou e-mail do cliente...">
+        </div>
+
+        <!-- lista que o JS vai preencher -->
+        <div id="lista-clientes-modal" class="list-group" style="max-height: 360px; overflow-y: auto;">
+          <!-- o JS reserva-admin.js monta isso aqui -->
+        </div>
+
+        <p class="mt-3 mb-0 text-muted" style="font-size: .75rem;">
+          Clientes com cadastro incompleto vão ser redirecionados primeiro para completar o cadastro.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.btn-favorito').forEach(button => {

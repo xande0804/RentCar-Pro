@@ -1,7 +1,8 @@
+// assets/js/reserva-admin.js
 document.addEventListener('DOMContentLoaded', function () {
     const clientes = window.listaDeClientes || [];
     const perfilLogado = window.perfilUsuarioLogado || 'visitante';
-    
+
     const modalElement = document.getElementById('selecionarClienteModal');
     if (!modalElement) return;
 
@@ -9,13 +10,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const listaClientesDiv = document.getElementById('lista-clientes-modal');
     const searchInput = document.getElementById('search-cliente-modal');
 
+    let codCarroSelecionado = null;
+
+    function getCodCarroFromHref(href) {
+        try {
+            const url = new URL(href, window.location.origin);
+            // preferir cod_carro; manter compat com id (href atual do botão usa id)
+            const codFromParam = url.searchParams.get('cod_carro');
+            const idFromParam = url.searchParams.get('id');
+            const cod = parseInt(codFromParam ?? idFromParam, 10);
+            return Number.isFinite(cod) ? cod : null;
+        } catch {
+            return null;
+        }
+    }
+
     function popularListaClientes(filtro = '') {
         listaClientesDiv.innerHTML = '';
-        const filtroLowerCase = filtro.toLowerCase();
+        const filtroLower = (filtro || '').toLowerCase();
 
         const clientesFiltrados = clientes.filter(c =>
-            c.nome.toLowerCase().includes(filtroLowerCase) ||
-            c.email.toLowerCase().includes(filtroLowerCase)
+            (c.nome || '').toLowerCase().includes(filtroLower) ||
+            (c.email || '').toLowerCase().includes(filtroLower)
         );
 
         if (clientesFiltrados.length === 0) {
@@ -25,33 +41,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
         clientesFiltrados.forEach(cliente => {
             const link = document.createElement('a');
-            if (cliente.cadastro_completo == 0) {
-                // ADICIONADO: Passa o ID do carro junto com o ID do cliente
-                link.href = `view/profile/completarCadastro.php?clienteId=${cliente.cod_usuario}&carroId=${window.carroIdSelecionado}`;
-            } else {
-                link.href = `view/reservas/finalizar.php?id=${window.carroIdSelecionado}&clienteId=${cliente.cod_usuario}`;
-            }
             link.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
 
-            // --- Definir o tipo de usuário e estilo da badge ---
-            let badgeText = '';
-            let badgeClass = '';
+            const cadastroCompleto = parseInt(cliente.cadastro_completo, 10) === 1;
 
+            if (!cadastroCompleto) {
+                // precisa completar cadastro antes de finalizar
+                link.href = `view/profile/completarCadastro.php?cod_usuario=${cliente.cod_usuario}&cod_carro=${codCarroSelecionado}`;
+            } else {
+                // fluxo normal: iniciar reserva em nome do cliente selecionado
+                // Enviamos cod_carro **e** id (backcompat com controller atual)
+                link.href =
+                  `controller/ReservaControl.php?acao=iniciar&cod_carro=${codCarroSelecionado}&id=${codCarroSelecionado}&cod_usuario=${cliente.cod_usuario}`;
+            }
+
+            // badge por perfil/estado
+            let badgeText = 'Outro';
+            let badgeClass = 'badge bg-secondary';
             if (cliente.perfil === 'cliente') {
                 badgeText = 'Cliente';
-                badgeClass = 'badge bg-success'; // verde
-            } 
-            else if (cliente.perfil === 'usuario' && cliente.cadastro_completo == 1) {
+                badgeClass = 'badge bg-success';
+            } else if (cliente.perfil === 'usuario' && cadastroCompleto) {
                 badgeText = 'Usuário Completo';
-                badgeClass = 'badge bg-primary'; // azul
-            } 
-            else if (cliente.perfil === 'usuario' && cliente.cadastro_completo == 0) {
+                badgeClass = 'badge bg-primary';
+            } else if (cliente.perfil === 'usuario' && !cadastroCompleto) {
                 badgeText = 'Usuário Incompleto';
-                badgeClass = 'badge bg-warning text-dark'; // amarelo
-            } 
-            else {
-                badgeText = 'Outro';
-                badgeClass = 'badge bg-secondary'; // cinza padrão
+                badgeClass = 'badge bg-warning text-dark';
             }
 
             link.innerHTML = `
@@ -65,24 +80,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Quando clicar no botão "Reservar"
-    document.querySelectorAll('.btn-reservar').forEach(button => {
+    // Interceptar o botão da vitrine: .btn-details
+    document.querySelectorAll('.btn-details').forEach(button => {
         button.addEventListener('click', function (event) {
-            event.preventDefault(); 
-            window.carroIdSelecionado = this.getAttribute('data-car-id');
+            // Só intercepta para staff
+            if (!['admin', 'gerente', 'funcionario'].includes(perfilLogado)) return;
 
-            if (['admin', 'gerente', 'funcionario'].includes(perfilLogado)) {
-                popularListaClientes(); 
-                modal.show();
-            } else {
-                window.location.href = this.href;
+            event.preventDefault();
+
+            codCarroSelecionado = getCodCarroFromHref(this.getAttribute('href'));
+            if (!codCarroSelecionado) {
+                alert('Não foi possível identificar o cod_carro selecionado.');
+                return;
             }
+
+            popularListaClientes(); // sem filtro inicial
+            modal.show();
         });
     });
 
     // Filtro de busca no modal
     if (searchInput) {
-        searchInput.addEventListener('input', function() {
+        searchInput.addEventListener('input', function () {
             popularListaClientes(this.value);
         });
     }

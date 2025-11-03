@@ -34,3 +34,20 @@ function registrarLog(string $acao, string $detalhes, ?int $cod_usuario = null) 
         error_log("ERRO AO REGISTRAR LOG DE AUDITORIA: " . $e->getMessage());
     }
 }
+
+const CATEGORIAS_CARRO = [
+  'Hatch'        => 'Hatch',
+  'Sedan'        => 'Sedã',
+  'SUV'          => 'SUV',
+  'Pickup'       => 'Picape',
+  'Minivan'      => 'Minivan',
+  'Van'          => 'Van',
+  'Perua'        => 'Perua / Wagon',
+  'Conversivel'  => 'Conversível',
+  'Coupe'        => 'Cupê',
+  'Esportivo'    => 'Esportivo',
+  'Luxo'         => 'Luxo',
+  'Utilitario'   => 'Utilitário',
+  'OffRoad'      => 'Off-road',
+  'NaoClassificado' => 'Não classificado', // temporário
+];

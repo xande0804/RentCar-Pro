@@ -12,8 +12,8 @@ if (empty($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) 
 
 $pageTitle = "Complete seu Cadastro";
 // Captura os IDs da URL
-$clienteId = filter_input(INPUT_GET, 'clienteId', FILTER_VALIDATE_INT);
-$carroId = filter_input(INPUT_GET, 'carroId', FILTER_VALIDATE_INT);
+$cod_usuario = filter_input(INPUT_GET, 'cod_usuario', FILTER_VALIDATE_INT);
+$cod_carro = filter_input(INPUT_GET, 'cod_carro', FILTER_VALIDATE_INT);
 
 $isNovoCliente = isset($_GET['novo_cliente']) && $_GET['novo_cliente'] === 'true';
 if ($isNovoCliente) {
@@ -55,11 +55,11 @@ if ($isNovoCliente) {
 
             <form action="controller/UsuarioControl.php" method="POST">
                 <input type="hidden" name="acao" value="completar_cadastro">
-                <?php if ($clienteId): // Se um funcionário está completando para um cliente ?>
-                    <input type="hidden" name="cod_usuario" value="<?= $clienteId ?>">
+                <?php if ($cod_usuario): // Se um funcionário está completando para um cliente ?>
+                    <input type="hidden" name="cod_usuario" value="<?= $cod_usuario ?>">
                 <?php endif; ?>
-                <?php if ($carroId): // Se a ação veio de uma tentativa de reserva ?>
-                    <input type="hidden" name="carroId" value="<?= $carroId ?>">
+                <?php if ($cod_carro): // Se a ação veio de uma tentativa de reserva ?>
+                    <input type="hidden" name="cod_carro" value="<?= $cod_carro ?>">
                 <?php endif; ?>
                 
                 <h4 class="mb-3">Dados Pessoais</h4>
@@ -84,6 +84,7 @@ if ($isNovoCliente) {
                 </div>
 
                 <div class="text-end mt-4">
+                    <a href="<?= BASE_URL ?>/view/carros/index.php" class="btn btn-secondary btn-lg">Cancelar</a>
                     <button type="submit" class="btn btn-primary btn-lg">Salvar e Continuar</button>
                 </div>
             </form>

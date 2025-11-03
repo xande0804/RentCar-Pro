@@ -99,7 +99,7 @@ $multas = $multaDAO->getAll();
                 <h5 class="modal-title">Registrar Nova Multa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="controller/MultaControl.php" method="POST">
+            <form action="controller/MultaControl.php" method="POST" class="form-loading-feedback">
                 <div class="modal-body">
                     <input type="hidden" name="acao" value="cadastrar">
                     <div class="mb-3">
@@ -142,7 +142,7 @@ $multas = $multaDAO->getAll();
                 <h5 class="modal-title">Editar Multa</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="controller/MultaControl.php" method="POST">
+            <form action="controller/MultaControl.php" method="POST" class="form-loading-feedback">
                 <div class="modal-body">
                     <input type="hidden" name="acao" value="atualizar">
                     <input type="hidden" name="cod_multa" id="edit-cod-multa">

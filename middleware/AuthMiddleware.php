@@ -1,36 +1,51 @@
 <?php
 
 class AuthMiddleware {
-    
+
+    /**
+     * Garante que o usuário está logado.
+     * - Se não estiver, salva a URL atual em redirect_url (se ainda não houver uma) e manda para login.
+     * - Mostra uma flash message padrão.
+     */
     public static function checkAuth() {
         if (empty($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) {
-            // Guarda a URL que o usuário tentou acessar para que possamos mandá-lo de volta depois do login.
-            $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-            
-            // Cria uma mensagem de erro para o usuário saber por que foi redirecionado.
+
+            // Preserva uma redirect_url apenas se ainda não existir
+            if (empty($_SESSION['redirect_url'])) {
+                $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+                // Preserva também a query string se houver
+                $query = $_SERVER['QUERY_STRING'] ?? '';
+                if (!empty($query) && strpos($requestUri, '?') === false) {
+                    $requestUri .= '?' . $query;
+                }
+                $_SESSION['redirect_url'] = $requestUri;
+            }
+
+            // Mensagem para o usuário
             $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Você precisa estar logado para acessar esta página.'];
-            
-            // Redireciona para o login e para a execução do script.
+
             header("Location: " . BASE_URL . "/view/auth/login.php");
             exit;
         }
     }
 
+    /**
+     * Garante que o usuário está logado e tem um dos perfis permitidos.
+     * - Se não estiver logado, delega para checkAuth().
+     * - Se estiver logado mas com perfil inválido, registra tentativa e volta para home.
+     */
     public static function checkProfile(array $perfisPermitidos) {
-        // ANTES de verificar o perfil, ele sempre verifica se o usuário está logado.
-        // Isso evita repetir código, pois toda página restrita por perfil também exige login.
+        // Primeiro, precisa estar logado
         self::checkAuth();
 
         $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
 
-        // Se o perfil do usuário NÃO ESTÁ na lista de perfis permitidos...
         if (!in_array($usuarioPerfil, $perfisPermitidos)) {
-            // ...registra uma tentativa de acesso indevido no log de auditoria.
+            // Loga tentativa de acesso negado (se sua config.php tiver registrarLog)
             $nomeUsuario = $_SESSION['usuario']['nome'] ?? 'Desconhecido';
             $detalhes = "Tentativa de acesso não autorizado pelo usuário '{$nomeUsuario}' à página '{$_SERVER['REQUEST_URI']}'. Perfil requerido: " . implode(', ', $perfisPermitidos);
             registrarLog("ACESSO_NEGADO", $detalhes);
 
-            // Cria uma mensagem de erro e expulsa o usuário para a página inicial.
             $_SESSION['flash_message'] = ['type' => 'danger', 'message' => 'Você não tem permissão para acessar esta página.'];
             header("Location: " . BASE_URL . "/public/index.php");
             exit;

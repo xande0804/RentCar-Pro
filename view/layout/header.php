@@ -35,6 +35,7 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
     <base href="http://localhost/Projeto/">
     <title><?= $pageTitle ?? 'RentCar Pro' ?></title>
 
+    
     <link rel="stylesheet" href="assets/css/globals.css">
     <link rel="stylesheet" href="assets/css/layout.css">
     <link rel="stylesheet" href="assets/css/navigation.css">
@@ -43,8 +44,9 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
     <link rel="stylesheet" href="assets/css/forms.css">
     <link rel="stylesheet" href="assets/css/tables.css">
     <link rel="stylesheet" href="assets/css/management.css">
-    <link rel="stylesheet" href="assets/css/vitrine.css">
+    <link rel="stylesheet" href="assets/css/vitrine.css"> 
     <link rel="stylesheet" href="assets/css/responsivo.css">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>

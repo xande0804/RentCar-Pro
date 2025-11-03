@@ -135,17 +135,17 @@ class ReservaDAO {
 
             $stmt_get_car = $this->pdo->prepare("SELECT cod_carro FROM tbl_reservas WHERE cod_reserva = ?");
             $stmt_get_car->execute([$reservaId]);
-            $carroId = $stmt_get_car->fetchColumn();
+            $cod_carro = $stmt_get_car->fetchColumn();
 
             $stmt_delete = $this->pdo->prepare("DELETE FROM tbl_reservas WHERE cod_reserva = ?");
             $stmt_delete->execute([$reservaId]);
 
-            if ($carroId) {
+            if ($cod_carro) {
                 // Verificamos se não há outra reserva para este carro antes de liberar
-                $disponivel = $this->checkDisponibilidade($carroId, date('Y-m-d H:i:s'), date('Y-m-d H:i:s', strtotime('+1 day')));
+                $disponivel = $this->checkDisponibilidade($cod_carro, date('Y-m-d H:i:s'), date('Y-m-d H:i:s', strtotime('+1 day')));
                 if($disponivel){
                     $stmt_carro = $this->pdo->prepare("UPDATE tbl_carros SET status = 'disponivel' WHERE cod_carro = ?");
-                    $stmt_carro->execute([$carroId]);
+                    $stmt_carro->execute([$cod_carro]);
                 }
             }
 
@@ -158,24 +158,28 @@ class ReservaDAO {
         }
     }
 
-    public function updateStatus($reservaId, $novoStatusReserva, $novoStatusCarro) {
+    public function updateStatus($cod_reserva, $novoStatusReserva, $novoStatusCarro) {
         try {
             $this->pdo->beginTransaction();
-
-            $sql_reserva = "UPDATE tbl_reservas SET status = ? WHERE cod_reserva = ?";
-            $stmt_reserva = $this->pdo->prepare($sql_reserva);
-            $stmt_reserva->execute([$novoStatusReserva, $reservaId]);
-
-            $stmt_get_car = $this->pdo->prepare("SELECT cod_carro FROM tbl_reservas WHERE cod_reserva = ?");
-            $stmt_get_car->execute([$reservaId]);
-            $carroId = $stmt_get_car->fetchColumn();
-
-            if ($carroId) {
-                $sql_carro = "UPDATE tbl_carros SET status = ? WHERE cod_carro = ?";
-                $stmt_carro = $this->pdo->prepare($sql_carro);
-                $stmt_carro->execute([$novoStatusCarro, $carroId]);
+    
+            // Atualiza status da reserva
+            $stmt = $this->pdo->prepare("UPDATE tbl_reservas SET status = :status WHERE cod_reserva = :id");
+            $stmt->bindValue(':status', $novoStatusReserva, PDO::PARAM_STR);
+            $stmt->bindValue(':id', $cod_reserva, PDO::PARAM_INT);
+            $stmt->execute();
+    
+            // Atualiza status do carro
+            $stmt_car = $this->pdo->prepare("SELECT cod_carro FROM tbl_reservas WHERE cod_reserva = ?");
+            $stmt_car->execute([$cod_reserva]);
+            $cod_carro = $stmt_car->fetchColumn();
+    
+            if ($cod_carro) {
+                $stmt2 = $this->pdo->prepare("UPDATE tbl_carros SET status = :status WHERE cod_carro = :car");
+                $stmt2->bindValue(':status', $novoStatusCarro, PDO::PARAM_STR);
+                $stmt2->bindValue(':car', $cod_carro, PDO::PARAM_INT);
+                $stmt2->execute();
             }
-
+    
             $this->pdo->commit();
             return true;
         } catch (PDOException $e) {
@@ -183,7 +187,7 @@ class ReservaDAO {
             error_log("Erro ao atualizar status da reserva: " . $e->getMessage());
             return false;
         }
-    }
+    }    
 
     public function findById($reservaId) {
         try {

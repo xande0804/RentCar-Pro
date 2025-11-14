@@ -29,6 +29,7 @@ if ($reserva['status'] !== 'pendente') {
     exit;
 }
 
+
 $carroDAO = new CarroDAO();
 $carro = $carroDAO->findById($reserva['cod_carro']);
 
@@ -37,6 +38,13 @@ $usuario = $usuarioDAO->findById($idUsuarioLogado);
 
 // Cálculo dos dias (apenas para exibição)
 $totalDias = (new DateTime($reserva['data_inicio']))->diff(new DateTime($reserva['data_fim']))->days;
+$img = $carro['imagem_url'] ?? '';
+$imagemSrc = filter_var($img, FILTER_VALIDATE_URL)
+    ? $img
+    : (!empty($img)
+        ? BASE_URL . '/' . ltrim($img, '/')
+        : "https://placehold.co/150x100/e2e8f0/cccccc?text=" . urlencode($carro['marca'])
+    );
 ?>
 
 <div class="container-xl mt-4 mb-5">
@@ -70,7 +78,7 @@ $totalDias = (new DateTime($reserva['data_inicio']))->diff(new DateTime($reserva
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
                             <div class="flex-shrink-0">
-                                <img src="https://placehold.co/150x100/e2e8f0/cccccc?text=<?= urlencode($carro['marca']) ?>" class="img-fluid rounded" style="width: 150px;" alt="carro">
+                                <img src="<?= htmlspecialchars($imagemSrc) ?>" class="img-fluid rounded" style="width:150px;" alt="<?= htmlspecialchars($carro['modelo']) ?>">
                             </div>
                             <div class="flex-grow-1 ms-4">
                                 <h5 class="mb-1"><?= htmlspecialchars($carro['marca'] . ' ' . $carro['modelo']) ?></h5>

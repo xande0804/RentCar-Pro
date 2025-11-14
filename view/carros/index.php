@@ -1,10 +1,15 @@
 <?php
-$pageTitle = "Catálogo de Veículos - RentCar Pro";
-$jsFiles = ['reserva-admin.js'];
-require_once __DIR__ . '/../layout/header.php';
-
+session_start();
 require_once __DIR__ . '/../../model/dao/FavoritoDAO.php';
+require_once __DIR__ . '/../../model/dao/CarroDAO.php';
+require_once __DIR__ . '/../../model/dao/UsuarioDAO.php';
+
+$pageTitle = "Catálogo de Veículos - RentCar Pro";
+$jsFiles   = ['reserva-admin.js'];
+
 $favoritoDAO = new FavoritoDAO();
+$carroDAO    = new CarroDAO();
+$usuarioDAO  = new UsuarioDAO();
 
 $usuarioLogado   = !empty($_SESSION['usuario_logado']) && $_SESSION['usuario_logado'] === true;
 
@@ -21,17 +26,13 @@ $filtros = [
     'cod_usuario' => $usuarioLogado ? $_SESSION['usuario']['id'] : null
 ];
 
-require_once __DIR__ . '/../../model/dao/CarroDAO.php';
-$carroDAO = new CarroDAO();
 $carros = $carroDAO->getAvailable($filtros);
-
-require_once __DIR__ . '/../../model/dao/UsuarioDAO.php';
-$usuarioDAO = new UsuarioDAO();
 $clientes = $usuarioDAO->getAllClientesEUsuarios();
 
 $todasCategorias = array_unique(array_column($carroDAO->getAll(), 'categoria'));
-$categorias = array_filter($todasCategorias); 
+$categorias = array_filter($todasCategorias);
 $carrosFavoritados = $usuarioLogado ? $favoritoDAO->getFavoritosByUsuario($_SESSION['usuario']['id']) : [];
+require_once __DIR__ . '/../layout/header.php';
 ?>
 
 <div class="vitrine-container">
@@ -99,10 +100,16 @@ $carrosFavoritados = $usuarioLogado ? $favoritoDAO->getFavoritosByUsuario($_SESS
             <?php foreach ($carros as $carro): ?>
                 <div class="car-card-new">
                     <div class="car-card-img-container">
-                        <img src="https://placehold.co/600x400/e2e8f0/cccccc?text=<?= urlencode($carro['marca']) ?>" class="card-img-top" alt="<?= htmlspecialchars($carro['marca'] . ' ' . $carro['modelo']); ?>">
-                        
                         <?php
-                            $isFavorito = in_array($carro['cod_carro'], $carrosFavoritados);
+                        $img = $carro['imagem_url'] ?? '';
+                        $src = $img
+                            ? (filter_var($img, FILTER_VALIDATE_URL) ? $img : BASE_URL . '/' . ltrim($img, '/'))
+                            : 'https://placehold.co/600x400/e2e8f0/cccccc?text=' . urlencode($carro['marca'] . ' ' . $carro['modelo']);
+                        ?>
+                        <img src="<?= htmlspecialchars($src) ?>" class="card-img-top" alt="<?= htmlspecialchars($carro['marca'] . ' ' . $carro['modelo']); ?>">
+
+                        <?php
+                            $isFavorito   = in_array($carro['cod_carro'], $carrosFavoritados);
                             $linkFavorito = $usuarioLogado ? '#' : 'view/auth/login.php';
                         ?>
                         <a href="<?= $linkFavorito ?>" class="btn-favorito <?= $isFavorito ? 'favorito-ativo' : '' ?>" data-car-id="<?= $carro['cod_carro'] ?>" title="Adicionar aos favoritos">
@@ -117,6 +124,7 @@ $carrosFavoritados = $usuarioLogado ? $favoritoDAO->getFavoritosByUsuario($_SESS
                                 <small class="text-muted">por dia</small>
                             </div>
                         </div>
+
                         <p class="car-specs-main mt-1 mb-2">
                             <?= htmlspecialchars($carro['categoria'] ?: 'N/A') ?> &bullet;
                             <?= htmlspecialchars(ucfirst($carro['cambio'])) ?> &bullet;
@@ -124,14 +132,15 @@ $carrosFavoritados = $usuarioLogado ? $favoritoDAO->getFavoritosByUsuario($_SESS
                         </p>
                         <hr class="my-2">
                         <div class="car-specs-details">
-                            <span class="spec-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M15 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 0 0 .014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 0 0 .022.004zM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10c-1.668.02-2.615.64-3.16 1.256C1.107 11.96 1 12.73 1 13h3c0-1.045.322-2.086.92-3zM3.5 7.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg> <?= htmlspecialchars($carro['lugares'] ?? '5') ?> lugares</span>
-                            <span class="spec-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/><path d="M10.828.122A.5.5 0 0 1 11 .5V1h.5A1.5 1.5 0 0 1 13 2.5V15h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V2.5A1.5 1.5 0 0 1 4.5 1H5V.5a.5.5 0 0 1 .172-.378l.894-.894A.5.5 0 0 1 6.5 0h3a.5.5 0 0 1 .354.146l.894.894zM7.146 12.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 14.207l-.646.647a.5.5 0 0 1-.708-.708l2-2zM11 1.5H5v13h6V1.5z"/></svg> <?= htmlspecialchars($carro['portas'] ?? '4') ?> portas</span>
+                            <span class="spec-item"><?= htmlspecialchars($carro['lugares'] ?? '5') ?> lugares</span>
+                            <span class="spec-item"><?= htmlspecialchars($carro['portas'] ?? '4') ?> portas</span>
                             <?php if (!empty($carro['ar_condicionado']) && $carro['ar_condicionado']): ?>
-                                <span class="spec-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16a.5.5 0 0 1-.5-.5v-1.293l-.646.647a.5.5 0 0 1-.707-.708l1.5-1.5a.5.5 0 0 1 .708 0l1.5 1.5a.5.5 0 1 1-.708.708L8.5 14.207V15.5A.5.5 0 0 1 8 16zM2.071 11.071a.5.5 0 0 1 .707 0l.646.646.293-.293a.5.5 0 0 1 .707.708l-1.5 1.5a.5.5 0 0 1-.708-.708l1.5-1.5zM12.929 11.071a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708-.708l1.5-1.5.293-.293.646.646a.5.5 0 0 1 .708 0zM8 0a.5.5 0 0 1 .5.5v1.293l.646-.647a.5.5 0 1 1 .708.708l-1.5 1.5a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 1.793V.5A.5.5 0 0 1 8 0zM12.929 4.929a.5.5 0 0 1 .707 0l.646.646.293-.293a.5.5 0 0 1 .708.707l-1.5 1.5a.5.5 0 0 1-.707 0l-1.5-1.5a.5.5 0 0 1 .707-.707l.293.293zM2.071 4.929a.5.5 0 0 1 0-.707l1.5-1.5a.5.5 0 0 1 .708.708l-1.5 1.5-.293.293-.646-.647a.5.5 0 0 1 0-.707zM4.646 8.354a.5.5 0 0 1 0-.708l1.5-1.5a.5.5 0 1 1 .708.708l-1.5 1.5a.5.5 0 0 1-.708 0zm6.708 0a.5.5 0 0 1 0-.708l1.5-1.5a.5.5 0 1 1 .708.708l-1.5 1.5a.5.5 0 0 1-.708 0z"/></svg> Ar cond.</span>
+                                <span class="spec-item">Ar cond.</span>
                             <?php else: ?>
-                                <span class="spec-item text-muted text-decoration-line-through"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">...</svg> Sem ar</span>
+                                <span class="spec-item text-muted text-decoration-line-through">Sem ar</span>
                             <?php endif; ?>
                         </div>
+
                         <div class="mt-auto pt-3">
                             <?php if ($carro['status'] == 'disponivel'): ?>
                                 <a href="controller/ReservaControl.php?acao=iniciar&id=<?= $carro['cod_carro']; ?>" class="btn btn-primary btn-details">Ver Detalhes</a>

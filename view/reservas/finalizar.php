@@ -23,11 +23,17 @@ if (!$carro || $carro['status'] !== 'disponivel') {
     exit;
 }
 
-// (Removido o DAO de Planos, pois a lógica de planos está no JS e não vem do banco)
+$img = $carro['imagem_url'] ?? '';
+$imagemSrc = filter_var($img, FILTER_VALIDATE_URL)
+    ? $img
+    : (!empty($img)
+        ? BASE_URL . '/' . ltrim($img, '/')
+        : "https://placehold.co/800x500/e2e8f0/cccccc?text=" . urlencode($carro['marca'])
+    );
 
 // Dados para os ícones (simulando)
 $lugares = $carro['categoria'] === 'Hatch' ? 4 : 5;
-$portas = 4; // Você pode adicionar isso ao seu BD
+$portas = 4;
 ?>
 
 <div class="step-header-wrapper">
@@ -49,11 +55,9 @@ $portas = 4; // Você pode adicionar isso ao seu BD
         <div class="col-lg-7">
 
             <div class="detail-gallery">
-                <div class="gallery-main-image">
-
-                    <img src="https://placehold.co/800x500/e2e8f0/cccccc?text=<?= urlencode($carro['marca']) ?>" 
-                         alt="<?= htmlspecialchars($carro['modelo']) ?>">
-                </div>
+            <div class="gallery-main-image mb-4">
+                <img src="<?= htmlspecialchars($imagemSrc) ?>" class="img-fluid rounded shadow-sm" alt="<?= htmlspecialchars($carro['modelo']) ?>">
+            </div>
 
                 <?php if (isset($carro['fotos']) && count($carro['fotos']) > 1): ?>
                     <div class="gallery-thumbnails">

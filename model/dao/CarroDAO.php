@@ -44,9 +44,9 @@ class CarroDAO {
     public function create(CarroDTO $carro) {
         try {
             $sql = "INSERT INTO tbl_carros 
-                (marca, modelo, categoria, ano, cor, combustivel, cambio, ar_condicionado, preco_diaria, status, km_total, descricao) 
+                (marca, modelo, categoria, ano, cor, combustivel, cambio, ar_condicionado, preco_diaria, status, km_total, descricao, imagem_url) 
             VALUES 
-                (:marca, :modelo, :categoria, :ano, :cor, :combustivel, :cambio, :ar_condicionado, :preco_diaria, :status, :km_total, :descricao)";
+                (:marca, :modelo, :categoria, :ano, :cor, :combustivel, :cambio, :ar_condicionado, :preco_diaria, :status, :km_total, :descricao, :imagem_url)";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(":marca", $carro->getMarca());
@@ -61,6 +61,7 @@ class CarroDAO {
             $stmt->bindValue(":status", $carro->getStatus());
             $stmt->bindValue(":km_total", $carro->getKmTotal(), PDO::PARAM_INT);
             $stmt->bindValue(":descricao", $carro->getDescricao());
+            $stmt->bindValue(":imagem_url", $carro->getImagemUrl());
             return $stmt->execute();
 
         } catch (PDOException $e) {
@@ -95,11 +96,11 @@ class CarroDAO {
                 $params[':data_fim']    = $filtros['data_fim'];
             }
 
-            if (!empty($filtros['categoria']))   { $sql .= " AND c.categoria = :categoria";         $params[':categoria'] = $filtros['categoria']; }
-            if (!empty($filtros['cambio']))      { $sql .= " AND c.cambio = :cambio";               $params[':cambio'] = $filtros['cambio']; }
+            if (!empty($filtros['categoria']))   { $sql .= " AND c.categoria = :categoria";         $params[':categoria']   = $filtros['categoria']; }
+            if (!empty($filtros['cambio']))      { $sql .= " AND c.cambio = :cambio";               $params[':cambio']      = $filtros['cambio']; }
             if (!empty($filtros['combustivel'])) { $sql .= " AND c.combustivel = :combustivel";     $params[':combustivel'] = $filtros['combustivel']; }
-            if (!empty($filtros['preco_min']))   { $sql .= " AND c.preco_diaria >= :preco_min";     $params[':preco_min'] = $filtros['preco_min']; }
-            if (!empty($filtros['preco_max']))   { $sql .= " AND c.preco_diaria <= :preco_max";     $params[':preco_max'] = $filtros['preco_max']; }
+            if (!empty($filtros['preco_min']))   { $sql .= " AND c.preco_diaria >= :preco_min";     $params[':preco_min']   = $filtros['preco_min']; }
+            if (!empty($filtros['preco_max']))   { $sql .= " AND c.preco_diaria <= :preco_max";     $params[':preco_max']   = $filtros['preco_max']; }
 
             if (!empty($filtros['ordenar'])) {
                 if ($filtros['ordenar'] === 'preco_asc')       $sql .= " ORDER BY c.preco_diaria ASC, c.marca, c.modelo";
@@ -146,7 +147,8 @@ class CarroDAO {
                 preco_diaria = :preco_diaria,
                 status = :status,
                 km_total = :km_total,
-                descricao = :descricao
+                descricao = :descricao,
+                imagem_url = :imagem_url
             WHERE cod_carro = :cod_carro";
 
             $stmt = $this->pdo->prepare($sql);
@@ -163,6 +165,7 @@ class CarroDAO {
             $stmt->bindValue(":status", $carro->getStatus());
             $stmt->bindValue(":km_total", $carro->getKmTotal(), PDO::PARAM_INT);
             $stmt->bindValue(":descricao", $carro->getDescricao());
+            $stmt->bindValue(":imagem_url", $carro->getImagemUrl());
             return $stmt->execute();
 
         } catch (PDOException $e) {

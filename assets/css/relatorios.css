@@ -1,0 +1,205 @@
+/* ===========================================================
+   RELATÓRIOS E MÉTRICAS - RentCar Pro
+   Autor: Xande / ChatGPT
+   =========================================================== */
+
+   :root {
+    --cor-primaria: #2563eb;
+    --cor-sucesso: #16a34a;
+    --cor-alerta: #f59e0b;
+    --cor-erro: #dc2626;
+    --cor-fundo: #f9fafb;
+    --cor-card: #ffffff;
+    --cor-borda: #e5e7eb;
+    --cor-texto: #111827;
+    --cor-secundaria: #6b7280;
+  }
+  
+  /* ===== Layout geral ===== */
+  body {
+    background-color: var(--cor-fundo);
+  }
+  
+  /* Layout de tela cheia */
+  .content-reports {
+    max-width: 95%; /* Ocupa quase a tela inteira */
+    margin: 0 auto;  /* Centraliza */
+    padding: 1rem 1.25rem 2rem 1.25rem;
+  }
+  
+  .table-header h2 {
+    font-weight: 700;
+    color: var(--cor-texto);
+    font-size: 1.6rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .table-header p {
+    color: var(--cor-secundaria);
+    font-size: 0.95rem;
+  }
+  
+  /* ===== Filtros ===== */
+  .d-flex button {
+    transition: all 0.2s ease;
+  }
+  
+  .d-flex button:hover {
+    transform: scale(1.03);
+  }
+  
+  /* ===== KPI Cards ===== */
+  .kpi-card {
+    background: var(--cor-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  }
+  
+  .kpi-title {
+    font-size: 0.85rem;
+    color: var(--cor-secundaria);
+    margin-bottom: 6px;
+  }
+  
+  .kpi-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    letter-spacing: -0.5px;
+  }
+  
+  /* ===== Charts ===== */
+  .chart-card {
+    background: var(--cor-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    height: 100%; /* Garante que os cards da mesma linha tenham a mesma altura */
+  }
+  
+  .chart-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .chart-title {
+    font-weight: 600;
+    color: var(--cor-texto);
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  
+  /* ===== Rank lists ===== */
+  .rank-list {
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  
+  .rank-list .rank-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--cor-borda);
+    transition: background-color 0.2s;
+  }
+  
+  .rank-list .rank-item:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .rank-list .rank-item strong {
+    color: var(--cor-texto);
+    font-weight: 600;
+  }
+  
+  .rank-list .rank-item small {
+    color: var(--cor-secundaria);
+  }
+  
+  /* ===== Skeleton e animações ===== */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: #f3f4f6;
+  }
+  
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(243,244,246,0) 0%, rgba(243,244,246,0.8) 50%, rgba(243,244,246,0) 100%);
+    transform: translateX(-100%);
+    animation: skeletonAnim 1.2s infinite;
+  }
+  
+  @keyframes skeletonAnim {
+    to { transform: translateX(100%); }
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  
+  /* ===== Responsividade ===== */
+  @media (max-width: 991px) {
+    .kpi-card .kpi-value {
+      font-size: 1.5rem;
+    }
+    .chart-title {
+      font-size: 0.95rem;
+    }
+    .rank-list {
+      max-height: 250px;
+    }
+    .content-reports {
+      max-width: 100%;
+      padding: 0.5rem;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .content-reports {
+      padding: 0.5rem;
+    }
+  
+    .d-flex.flex-wrap {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .d-flex.flex-wrap > * {
+      width: 100%;
+    }
+  
+    #btn-exportar {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+  
+  /* ===== Tooltip custom (Chart.js) ===== */
+  .chartjs-tooltip {
+    background: rgba(17, 24, 39, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    pointer-events: none;
+  }

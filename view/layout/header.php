@@ -46,6 +46,7 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
     <link rel="stylesheet" href="assets/css/management.css">
     <link rel="stylesheet" href="assets/css/vitrine.css"> 
     <link rel="stylesheet" href="assets/css/responsivo.css">
+    <link rel="stylesheet" href="assets/css/relatorios.css">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>

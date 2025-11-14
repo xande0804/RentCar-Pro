@@ -14,6 +14,7 @@ class CarroDTO {
     private $status;
     private $km_total;
     private $descricao;
+    private $imagem_url;
 
     public function getCodCarro() {
         return $this->cod_carro;
@@ -106,4 +107,12 @@ class CarroDTO {
     public function setDescricao($descricao) {
         $this->descricao = $descricao;
     }
+
+    public function getImagemUrl() { 
+        return $this->imagem_url; 
+    }
+    public function setImagemUrl($imagem_url) { 
+        $this->imagem_url = $imagem_url; 
+    }
+
 }

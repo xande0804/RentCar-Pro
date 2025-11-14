@@ -35,9 +35,6 @@ if ($acao === 'login') {
                 'perfil' => $usuario['perfil'] ?? 'usuario'
             ];
 
-            // Log de sucesso (opcional, se sua config.php tiver registrarLog)
-            registrarLog("LOGIN_SUCESSO", "Usuário '{$usuario['nome']}' realizou login no sistema.", (int)$usuario['cod_usuario']);
-
             /**
              * PRIORIDADE 1: se houver reserva_pendente, continuar o fluxo da reserva
              */

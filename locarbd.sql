@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3308:3308
--- Tempo de geração: 31-Out-2025 às 03:41
+-- Tempo de geração: 03-Nov-2025 às 17:31
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -65,10 +65,10 @@ CREATE TABLE `tbl_carros` (
 --
 
 INSERT INTO `tbl_carros` (`cod_carro`, `marca`, `modelo`, `categoria`, `ano`, `cor`, `combustivel`, `cambio`, `ar_condicionado`, `preco_diaria`, `status`, `km_total`, `descricao`, `data_cadastro`) VALUES
-(1, 'Honda', 'Civic', 'Sedan', '2024', 'Preto', 'flex', 'automatico', 1, 400.00, 'alugado', 2500000, '', '2025-10-01 15:13:14'),
+(1, 'Honda', 'Civic', 'Sedan', '2024', 'Preto', 'flex', 'automatico', 1, 400.00, 'disponivel', 2500000, '', '2025-10-01 15:13:14'),
 (3, 'Bicicleta', 'Multilaser', 'Luxo', '2010', 'amarela', 'alcool', 'automatico', 0, 9.00, 'reservado', 100, '', '2025-10-02 14:24:09'),
 (8, 'Honda', 'HRV', 'SUV', '2025', 'Vinho', 'flex', 'automatico', 0, 99.00, 'disponivel', 2000, '', '2025-10-09 16:55:46'),
-(9, 'Chevrolet', 'Onix', 'Hatch', '2024', 'Branco', 'gasolina', 'manual', 1, 10.00, 'reservado', 1234, '', '2025-10-15 15:07:53');
+(9, 'Chevrolet', 'Onix', 'Hatch', '2024', 'Branco', 'gasolina', 'manual', 1, 10.00, 'disponivel', 1234, '', '2025-10-15 15:07:53');
 
 -- --------------------------------------------------------
 
@@ -124,7 +124,9 @@ INSERT INTO `tbl_enderecos` (`cod_endereco`, `cod_usuario`, `cep`, `logradouro`,
 (34, 184, '72260-631', 'Quadra QNO 16 Conjunto 31', '4', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
 (35, 185, '72260-631', 'Quadra QNO 16 Conjunto 31', '04', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
 (36, 187, '72260-631', 'Quadra QNO 16 Conjunto 31', '04', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
-(37, 188, '72160-804', 'Quadra QNL 18 Conjunto D', '89', 'bvxfc', 'Taguatinga Norte (Taguatinga)', 'Brasília', 'DF');
+(37, 188, '72160-804', 'Quadra QNL 18 Conjunto D', '89', 'bvxfc', 'Taguatinga Norte (Taguatinga)', 'Brasília', 'DF'),
+(38, 189, '72260-631', 'Quadra QNO 16 Conjunto 31', '16', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
+(39, 190, '72260-631', 'Quadra QNO 16 Conjunto 31', '16', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF');
 
 -- --------------------------------------------------------
 
@@ -364,7 +366,26 @@ INSERT INTO `tbl_logs` (`cod_log`, `cod_usuario`, `acao_realizada`, `detalhes`, 
 (192, 188, 'PAGAMENTO_RESERVA', 'Usuário \'Pele\' (ID: 188) pagou a reserva #49 via cartao. Status alterado para \'aguardando_retirada\'.', '2025-10-30 19:43:00'),
 (193, 101, 'LOGIN_SUCESSO', 'Usuário \'administrador\' realizou login no sistema.', '2025-10-30 19:43:38'),
 (194, 101, 'MUDAR_STATUS_ATIVA', 'Usuário \'administrador\' marcou a reserva #49 como ativa.', '2025-10-30 19:44:10'),
-(195, 101, 'LOGIN_SUCESSO', 'Usuário \'administrador\' realizou login no sistema.', '2025-10-31 01:33:38');
+(195, 101, 'LOGIN_SUCESSO', 'Usuário \'administrador\' realizou login no sistema.', '2025-10-31 01:33:38'),
+(196, 189, 'LOGIN_SUCESSO', 'Usuário \'ana\' realizou login no sistema.', '2025-11-02 19:49:28'),
+(197, 139, 'LOGIN_SUCESSO', 'Usuário \'cliente\' realizou login no sistema.', '2025-11-02 19:51:55'),
+(198, 139, 'LOGIN_SUCESSO', 'Usuário \'cliente\' realizou login no sistema.', '2025-11-03 15:28:53'),
+(199, 139, 'CRIACAO_RESERVA', 'Usuário \'cliente\' criou a reserva #1 (valor R$ 1856.25) para o carro ID 8. Status: Pendente.', '2025-11-03 15:29:02'),
+(200, 139, 'CANCELAMENTO_RESERVA', 'Usuário \'cliente\' cancelou a reserva #52.', '2025-11-03 15:29:05'),
+(201, 101, 'LOGIN_SUCESSO', 'Usuário \'administrador\' realizou login no sistema.', '2025-11-03 15:29:44'),
+(202, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #49. Novo status: concluida.', '2025-11-03 15:29:55'),
+(203, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #47. Novo status: concluida.', '2025-11-03 15:30:11'),
+(204, 139, 'LOGIN_SUCESSO', 'Usuário \'cliente\' realizou login no sistema.', '2025-11-03 15:32:56'),
+(205, 139, 'CRIACAO_RESERVA', 'Usuário \'cliente\' criou a reserva #1 (valor R$ 8000) para o carro ID 1. Status: Pendente.', '2025-11-03 15:33:04'),
+(206, 190, 'LOGIN_SUCESSO', 'Usuário \'xande\' realizou login no sistema.', '2025-11-03 15:33:34'),
+(207, 190, 'CRIACAO_RESERVA', 'Usuário \'xande\' criou a reserva #1 (valor R$ 2846.25) para o carro ID 8. Status: Pendente.', '2025-11-03 15:33:46'),
+(208, 190, 'CANCELAMENTO_RESERVA', 'Usuário \'xande\' cancelou a reserva #54.', '2025-11-03 15:33:49'),
+(209, 139, 'LOGIN_SUCESSO', 'Usuário \'cliente\' realizou login no sistema.', '2025-11-03 15:34:00'),
+(210, 139, 'CANCELAMENTO_RESERVA', 'Usuário \'cliente\' cancelou a reserva #53.', '2025-11-03 15:34:11'),
+(211, 101, 'LOGIN_SUCESSO', 'Usuário \'administrador\' realizou login no sistema.', '2025-11-03 15:34:22'),
+(212, 101, 'CRIACAO_RESERVA', 'Usuário \'administrador\' criou a reserva #1 (valor R$ 4500) para o carro ID 1. Status: Pendente.', '2025-11-03 15:34:34'),
+(213, 101, 'ACESSO_NEGADO', 'Tentativa de acesso não autorizado pelo usuário \'administrador\' à página \'/Projeto/view/reservas/minhasReservas.php\'. Perfil requerido: cliente, usuario', '2025-11-03 15:34:34'),
+(214, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #55. Novo status: concluida.', '2025-11-03 15:35:08');
 
 -- --------------------------------------------------------
 
@@ -486,9 +507,13 @@ INSERT INTO `tbl_reservas` (`cod_reserva`, `cod_usuario`, `cod_carro`, `cod_plan
 (42, 182, 9, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'concluida', 0, NULL, 72.00, NULL, 0),
 (44, 183, 3, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'concluida', 0, NULL, 64.80, NULL, 0),
 (45, 184, 1, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'concluida', 0, NULL, 2880.00, NULL, 0),
-(47, 185, 9, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'pendente', 0, NULL, 80.00, NULL, 0),
+(47, 185, 9, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'concluida', 0, NULL, 72.00, NULL, 0),
 (48, 187, 3, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'aguardando_retirada', 0, NULL, 90.00, NULL, 0),
-(49, 188, 1, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'ativa', 0, NULL, 4000.00, NULL, 0);
+(49, 188, 1, NULL, '2025-10-30 00:00:00', '2025-11-07 00:00:00', 'concluida', 0, NULL, 2880.00, NULL, 0),
+(52, 139, 8, NULL, '2025-11-04 00:00:00', '2025-11-19 00:00:00', 'cancelada', 0, NULL, 1856.25, NULL, 0),
+(53, 139, 1, NULL, '2025-11-04 00:00:00', '2025-11-20 00:00:00', 'cancelada', 0, NULL, 8000.00, NULL, 0),
+(54, 190, 8, NULL, '2025-11-04 00:00:00', '2025-11-27 00:00:00', 'cancelada', 0, NULL, 2846.25, NULL, 0),
+(55, 101, 1, NULL, '2025-11-03 00:00:00', '2025-11-12 00:00:00', 'concluida', 0, NULL, 3240.00, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -562,7 +587,9 @@ INSERT INTO `tbl_usuarios` (`cod_usuario`, `nome`, `email`, `senha`, `perfil`, `
 (185, 'chapeu', 'chapeu@gmail.com', '$2y$10$gR/kL0bQZB.GWy3TiiAGgeaVMw4dkhRwXcYLhm/6QC5zIsEjaGpOG', 'cliente', '2025-10-30 14:58:51', '(66) 66666-6666', '080.608.401-42', 1, 'ativo'),
 (186, 'madrid', 'madrid@gmail.com', '$2y$10$N8vHKKxM2srMWzFNW6CX4e9eWLbqulStsVE1aIBoKcJFedNfaqo6a', 'usuario', '2025-10-30 15:01:40', NULL, NULL, 0, 'ativo'),
 (187, 'madrid', 'madrid2@gmail.com', '$2y$10$CEcpCogKLd9NIHPUNM.3cekkaNPmVKArQODLrE3NFWaaguKMqaNuC', 'cliente', '2025-10-30 15:02:34', '(66) 66666-6666', '080.608.401-42', 1, 'ativo'),
-(188, 'Pele', 'pele@gmail.com', '$2y$10$CQVimIdXTrn9Xh1pff0WCugoxp9RCnpPz9yJAtmFwf.pQss9DTFR2', 'cliente', '2025-10-30 16:40:21', '(98) 43923-8394', '054.187.281-80', 1, 'ativo');
+(188, 'Pele', 'pele@gmail.com', '$2y$10$CQVimIdXTrn9Xh1pff0WCugoxp9RCnpPz9yJAtmFwf.pQss9DTFR2', 'cliente', '2025-10-30 16:40:21', '(98) 43923-8394', '054.187.281-80', 1, 'ativo'),
+(189, 'ana', 'ana@gmail.com', '$2y$10$6NrO1ziS5mfucaVdUAGcOuhosJbPfscsj2IkB8wr17KPp2h1GBty6', 'usuario', '2025-11-02 16:49:24', '(61) 99577-0554', '080.608.401-42', 1, 'ativo'),
+(190, 'xande', 'iop@gmail.com', '$2y$10$jHEhVq1T5upI17wjdZykvO5Y6fwqokHpklxQia7TlQ2jIrml3gIWi', 'cliente', '2025-11-03 12:33:28', '(61) 99577-0554', '080.608.401-42', 1, 'ativo');
 
 --
 -- Índices para tabelas despejadas
@@ -667,7 +694,7 @@ ALTER TABLE `tbl_carros`
 -- AUTO_INCREMENT de tabela `tbl_enderecos`
 --
 ALTER TABLE `tbl_enderecos`
-  MODIFY `cod_endereco` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `cod_endereco` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_favoritos`
@@ -685,7 +712,7 @@ ALTER TABLE `tbl_fotos_carros`
 -- AUTO_INCREMENT de tabela `tbl_logs`
 --
 ALTER TABLE `tbl_logs`
-  MODIFY `cod_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
+  MODIFY `cod_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_manutencoes`
@@ -709,13 +736,13 @@ ALTER TABLE `tbl_planos_aluguel`
 -- AUTO_INCREMENT de tabela `tbl_reservas`
 --
 ALTER TABLE `tbl_reservas`
-  MODIFY `cod_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `cod_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_usuarios`
 --
 ALTER TABLE `tbl_usuarios`
-  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=189;
+  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
 
 --
 -- Restrições para despejos de tabelas

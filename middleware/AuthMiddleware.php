@@ -2,11 +2,6 @@
 
 class AuthMiddleware {
 
-    /**
-     * Garante que o usuário está logado.
-     * - Se não estiver, salva a URL atual em redirect_url (se ainda não houver uma) e manda para login.
-     * - Mostra uma flash message padrão.
-     */
     public static function checkAuth() {
         if (empty($_SESSION['usuario_logado']) || $_SESSION['usuario_logado'] !== true) {
 
@@ -29,11 +24,6 @@ class AuthMiddleware {
         }
     }
 
-    /**
-     * Garante que o usuário está logado e tem um dos perfis permitidos.
-     * - Se não estiver logado, delega para checkAuth().
-     * - Se estiver logado mas com perfil inválido, registra tentativa e volta para home.
-     */
     public static function checkProfile(array $perfisPermitidos) {
         // Primeiro, precisa estar logado
         self::checkAuth();

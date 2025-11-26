@@ -70,7 +70,13 @@ if ($acao === 'login') {
             }
 
             // Padrão: sem reserva pendente e sem redirect específico → home
-            header("Location: " . BASE_URL . "/public/index.php");
+            $perfilPosLogin = $_SESSION['usuario']['perfil'] ?? 'visitante';
+
+            if (in_array($perfilPosLogin, ['admin','gerente','funcionario'])) {
+                header("Location: " . BASE_URL . "/view/admin/relatorios.php");
+            } else {
+                header("Location: " . BASE_URL . "/public/index.php");
+            }
             exit;
 
         } else {

@@ -10,9 +10,24 @@ $pageTitle = "Login - RentCar Pro";
     <base href="http://localhost/Projeto/">
     <link rel="stylesheet" href="assets/css/globals.css">
     <link rel="stylesheet" href="assets/css/stylelogin.css">
+    <link rel="stylesheet" href="assets/css/theme-dark.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="auth-body">
+
+<script>
+(function () {
+    try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+            document.body.classList.add('theme-dark');
+            document.documentElement.style.colorScheme = 'dark';
+        } else {
+            document.documentElement.style.colorScheme = 'light';
+        }
+    } catch (e) {}
+})();
+</script>
 
     <main class="auth-main">
         <form method="POST" action="controller/AuthControl.php">

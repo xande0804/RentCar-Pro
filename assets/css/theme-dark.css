@@ -1,0 +1,606 @@
+/* Base geral */
+body.theme-dark {
+    background-color: #020617; /* quase preto azuladinho */
+    color: #e5e7eb;
+}
+
+/* Corrige tags gerais */
+body.theme-dark a {
+    color: #60a5fa;
+}
+
+body.theme-dark a:hover {
+    color: #93c5fd;
+}
+
+/* Ajuda o navegador a entender que é dark */
+body.theme-dark {
+    color-scheme: dark;
+}
+
+/* Header */
+body.theme-dark header {
+    background-color: #020617;
+    border-bottom: 1px solid #1f2937;
+}
+
+body.theme-dark .top-bar {
+    background-color: #020617;
+    color: #e5e7eb;
+}
+
+body.theme-dark .site-logo-text span {
+    color: #e5e7eb;
+}
+
+body.theme-dark .header-links a {
+    color: #e5e7eb;
+}
+
+body.theme-dark .header-links a:hover {
+    color: #bfdbfe;
+}
+
+/* Botões do header */
+body.theme-dark .btn-header-action,
+body.theme-dark .btn-logout {
+    background-color: #111827;
+    color: #e5e7eb;
+    border-color: #1f2937;
+}
+
+body.theme-dark .btn-header-action.primary {
+    background-color: #2563eb;
+    border-color: #1d4ed8;
+    color: #e5e7eb;
+}
+
+body.theme-dark .btn-header-action:hover,
+body.theme-dark .btn-logout:hover {
+    background-color: #1f2937;
+}
+
+/* Ícone de tema */
+body.theme-dark .theme-toggle-btn {
+    background-color: transparent;
+    border: 1px solid #1f2937;
+}
+
+/* Conteúdos principais */
+body.theme-dark .content-management,
+body.theme-dark .content-reports {
+    background-color: #020617;
+    color: #e5e7eb;
+}
+
+/* Banner inicial */
+body.theme-dark .main-banner-image {
+    position: relative !important;
+    color: #e5e7eb;
+    overflow: hidden;
+}
+
+/* Luz azul ORIGINAL por cima da imagem */
+body.theme-dark .main-banner-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(circle at top, #1d4ed8 0, #020617 55%, #000 100%);
+    opacity: 0.60;        
+    pointer-events: none;
+}
+
+/* Conteúdo acima do overlay */
+body.theme-dark .main-banner-image * {
+    position: relative;
+    z-index: 2;
+}
+
+body.theme-dark .banner-content p {
+    color: #cbd5f5;
+}
+
+/* Cards genéricos */
+body.theme-dark .card,
+body.theme-dark .reservation-card,
+body.theme-dark .payment-card,
+body.theme-dark .modal-content {
+    background-color: #020617;
+    color: #e5e7eb;
+    border-color: #1f2937;
+}
+
+/* Cabeçalhos de cards */
+body.theme-dark .card-header,
+body.theme-dark .modal-header {
+    background-color: #0b1120;
+    border-bottom-color: #1f2937;
+    color: #e5e7eb;
+}
+
+/* Rodapé de cards/modals */
+body.theme-dark .card-footer,
+body.theme-dark .modal-footer {
+    background-color: #020617;
+    border-top-color: #1f2937;
+}
+
+/* Tabelas */
+body.theme-dark .data-table,
+body.theme-dark table.table {
+    background-color: #020617;
+    color: #e5e7eb;
+}
+
+body.theme-dark .data-table thead,
+body.theme-dark table.table thead {
+    background-color: #020617;
+    color: #e5e7eb;
+    border-bottom: 1px solid #1f2937;
+}
+
+body.theme-dark .data-table th,
+body.theme-dark .data-table td,
+body.theme-dark table.table th,
+body.theme-dark table.table td {
+    border-color: #1f2937;
+}
+
+body.theme-dark .data-table tbody tr:nth-child(odd),
+body.theme-dark table.table tbody tr:nth-child(odd) {
+    background-color: #020617;
+}
+
+body.theme-dark .data-table tbody tr:nth-child(even),
+body.theme-dark table.table tbody tr:nth-child(even) {
+    background-color: #020617; 
+}
+
+body.theme-dark .data-table tbody tr:hover,
+body.theme-dark table.table tbody tr:hover {
+    background-color: #0b1120;
+}
+
+/* Table header block (aquele título em cima das tabelas) */
+body.theme-dark .table-header h2 {
+    color: #e5e7eb;
+}
+
+body.theme-dark .table-header p {
+    color: #9ca3af;
+}
+
+/* Inputs e selects */
+body.theme-dark .form-control,
+body.theme-dark .form-select,
+body.theme-dark input[type="text"],
+body.theme-dark input[type="email"],
+body.theme-dark input[type="password"],
+body.theme-dark input[type="number"],
+body.theme-dark input[type="date"],
+body.theme-dark textarea {
+    background-color: #020617;
+    color: #e5e7eb;
+    border-color: #374151;
+}
+
+body.theme-dark .form-control::placeholder,
+body.theme-dark input::placeholder,
+body.theme-dark textarea::placeholder {
+    color: #6b7280;
+}
+
+body.theme-dark .input-group-text {
+    background-color: #020617;
+    border-color: #374151;
+    color: #9ca3af;              
+}
+
+body.theme-dark .form-control:focus,
+body.theme-dark .form-select:focus,
+body.theme-dark input:focus,
+body.theme-dark textarea:focus {
+    background-color: #020617;
+    color: #e5e7eb;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.6);
+}
+
+/* Botões gerais */
+body.theme-dark .btn,
+body.theme-dark button {
+    border-radius: 0.375rem;
+}
+
+/* Primário */
+body.theme-dark .btn-primary {
+    background-color: #2563eb;
+    border-color: #1d4ed8;
+    color: #e5e7eb;
+}
+
+body.theme-dark .btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+/* Secundário */
+body.theme-dark .btn-secondary,
+body.theme-dark .btn-outline-secondary {
+    background-color: #020617;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.theme-dark .btn-outline-secondary:hover {
+    background-color: #111827;
+}
+
+/* Botão "Novo" dos admins (btn-add) */
+body.theme-dark .btn-add {
+    background-color: #16a34a;
+    color: #e5e7eb;
+    border-color: #15803d;
+}
+
+body.theme-dark .btn-add:hover {
+    background-color: #15803d;
+}
+
+/* Botões de ação na tabela */
+body.theme-dark .btn-action.edit {
+    background-color: #2563eb;
+    border-color: #1d4ed8;
+    color: #e5e7eb;
+}
+
+body.theme-dark .btn-action.delete {
+    background-color: #b91c1c;
+    border-color: #991b1b;
+    color: #f9fafb;
+}
+
+/* Alerts */
+body.theme-dark .alert {
+    background-color: #111827;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+body.theme-dark .alert-success {
+    background-color: #064e3b;
+    border-color: #059669;
+    color: #bbf7d0;
+}
+
+body.theme-dark .alert-danger {
+    background-color: #7f1d1d;
+    border-color: #b91c1c;
+    color: #fee2e2;
+}
+
+/* Badges de status (reservas, multas, usuários, logs) */
+body.theme-dark .badge {
+    border-radius: 999px;
+}
+
+/* você já tem classes tipo .badge-success, .badge-pendente etc nos CSS atuais;
+   aqui deixo só exemplos genéricos para o tema escuro */
+body.theme-dark .badge-success,
+body.theme-dark .badge-ativo {
+    background-color: #16a34a;
+    color: #ecfdf5;
+}
+
+body.theme-dark .badge-pendente,
+body.theme-dark .badge-pendente-reserva {
+    background-color: #f97316;
+    color: #111827;
+}
+
+body.theme-dark .badge-cancelada {
+    background-color: #4b5563;
+    color: #e5e7eb;
+}
+
+/* KPI cards e gráficos (relatórios) */
+body.theme-dark .kpi-card,
+body.theme-dark .chart-card {
+    background-color: #020617;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+body.theme-dark .kpi-title {
+    color: #9ca3af;
+}
+
+body.theme-dark .kpi-value {
+    color: #e5e7eb;
+}
+
+body.theme-dark .rank-list .rank-item {
+    border-bottom-color: #1f2937;
+}
+
+
+/* Vitrine */
+body.theme-dark .vitrine-container {
+    color: #e5e7eb;
+}
+
+body.theme-dark .vitrine-header h1 {
+    color: #e5e7eb;
+}
+
+body.theme-dark .vitrine-header p {
+    color: #9ca3af;
+}
+
+/* Card novo de carro */
+body.theme-dark .car-card-new {
+    background-color: #020617;
+    border: 1px solid #1f2937;
+    color: #e5e7eb;
+}
+
+body.theme-dark .car-card-img-container {
+    background-color: #020617;
+}
+
+body.theme-dark .car-title {
+    color: #e5e7eb;
+}
+
+body.theme-dark .car-price {
+    color: #22c55e;
+}
+
+body.theme-dark .car-specs-main {
+    color: #9ca3af;
+}
+
+body.theme-dark .car-specs-details .spec-item {
+    background-color: #020617;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+/* Favorito */
+body.theme-dark .btn-favorito {
+    background-color: rgba(15,23,42,0.8);
+    border-color: #1f2937;
+}
+
+body.theme-dark .btn-favorito.favorito-ativo {
+    background-color: #b91c1c;
+}
+
+/* Mensagem quando não há carros */
+body.theme-dark .no-cars-message,
+body.theme-dark .no-results {
+    color: #9ca3af;
+}
+
+/* Breadcrumb / step-header */
+body.theme-dark .step-breadcrumb a {
+    color: #93c5fd;
+}
+
+body.theme-dark .step-breadcrumb .active {
+    color: #e5e7eb;
+}
+
+/* Resumo de reserva/pagamento */
+body.theme-dark .list-group-item {
+    background-color: #020617;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+body.theme-dark .payment-header h1,
+body.theme-dark .payment-header p {
+    color: #e5e7eb;
+}
+
+body.theme-dark .badge-transacao-segura {
+    background-color: #022c22;
+    border-color: #22c55e;
+    color: #bbf7d0;
+}
+
+body.theme-dark .summary-item .label {
+    color: #9ca3af;
+}
+
+body.theme-dark .summary-item .value {
+    color: #e5e7eb;
+}
+
+body.theme-dark .summary-total {
+    border-top-color: #1f2937;
+}
+
+/* seção "segurança" */
+body.theme-dark .security-section {
+    border-top-color: #1f2937;
+}
+
+body.theme-dark .security-item span {
+    color: #9ca3af;
+}
+
+/* Footer */
+body.theme-dark .footer {
+    background-color: #020617;
+    color: #6b7280;
+    border-top: 1px solid #1f2937;
+}
+
+/* Classes Bootstrap claras que estourariam no dark */
+body.theme-dark .bg-light {
+    background-color: #020617 !important;
+    color: #e5e7eb;
+}
+
+body.theme-dark .text-muted {
+    color: #9ca3af !important;
+}
+
+body.theme-dark,
+body.theme-dark.bg-light {
+    background-color: #020617 !important;
+    color: #e5e7eb !important;
+}
+body.theme-dark .auth-main {
+    background-color: #020617;
+    border-color: #1f2937;
+    color: #e5e7eb;
+}
+
+body.theme-dark .auth-main form {
+    background-color: #020617;
+    color: #e5e7eb;
+}
+
+body.theme-dark .detail-price-main {
+    color: #22c55e;         
+    font-weight: 700;
+}
+
+body.theme-dark .detail-price-main small {
+    color: #9ca3af;         
+}
+
+body.theme-dark .reservation-card .card-header .price {
+    color: #22c55e;
+    font-weight: 700;
+}
+
+body.theme-dark .reservation-card .card-header .per-day {
+    color: #9ca3af;
+}
+
+body.theme-dark .detail-content {
+    background-color: #020617;
+    border: 1px solid #1f2937;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    color: #e5e7eb;
+}
+
+body.theme-dark .detail-content h1,
+body.theme-dark .detail-content h3.section-title {
+    color: #e5e7eb;
+}
+
+body.theme-dark .detail-content .specs-quick,
+body.theme-dark .detail-content .spec-name,
+body.theme-dark .detail-content .spec-label {
+    color: #9ca3af;
+}
+
+body.theme-dark .detail-content .spec-value {
+    color: #e5e7eb;
+}
+
+body.theme-dark .detail-content .tech-spec-row {
+    border-bottom: 1px solid #1f2937;
+}
+
+body.theme-dark .tech-spec-row .spec-label {
+    color: #9ca3af !important;
+}
+
+body.theme-dark .tech-spec-row .spec-value {
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .reservation-card {
+    background-color: #020617 !important;
+    border: 1px solid #1f2937 !important;
+    border-radius: 0.75rem;
+    color: #e5e7eb;
+}
+
+body.theme-dark .reservation-card .card-header {
+    background-color: #020617;
+    border-bottom: 1px solid #1f2937;
+}
+
+body.theme-dark .reservation-card .card-body {
+    background-color: #020617;
+    color: #e5e7eb;
+}
+
+body.theme-dark #resumo-reserva {
+    background-color: #020617;
+    border: 1px dashed #1f2937;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+}
+
+body.theme-dark #resumo-reserva h5 {
+    color: #e5e7eb !important;
+    margin-bottom: 0.5rem;
+}
+
+body.theme-dark #resumo-reserva p {
+    color: #e5e7eb;
+    margin-bottom: 0.25rem;
+}
+
+body.theme-dark .spec-icon-item {
+    background-color: #0b1120 !important;
+    border: 1px solid #1f2937 !important;
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .spec-icon-item svg {
+    color: #60a5fa !important;
+    stroke: #60a5fa !important;
+}
+
+/* Corrige cor da linha Total Estimado no resumo */
+body.theme-dark #resumo-reserva .h4 strong {
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .reservation-card h4{
+    color: #e5e7eb !important;
+}
+
+body.theme-dark #resumo-reserva p strong {
+    color: #e5e7eb !important;
+}
+
+body.theme-dark #resumo-reserva .h4 {
+    color: #e5e7eb !important;
+}
+
+body.theme-dark #resumo-reserva #valor-total {
+    color: #e5e7eb !important;
+    font-weight: 700;
+}
+
+body.theme-dark #resumo-reserva .h4 {
+    display: flex;
+    justify-content: space-between;
+}
+
+body.theme-dark .card.shadow-sm {
+    background-color: #020617 !important;
+    border-color: #1f2937 !important;
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .card-header.bg-light {
+    background-color: #020617 !important;
+    border-bottom: 1px solid #1f2937 !important;
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .card-header.bg-light p {
+    color: #9ca3af !important;
+}

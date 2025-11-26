@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3308:3308
--- Tempo de geração: 03-Nov-2025 às 17:31
+-- Tempo de geração: 26-Nov-2025 às 03:53
 -- Versão do servidor: 10.4.32-MariaDB
 -- versão do PHP: 8.2.12
 
@@ -20,22 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `locarbd`
 --
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `tbl_avaliacoes_carro`
---
-
-CREATE TABLE `tbl_avaliacoes_carro` (
-  `cod_avaliacao` int(11) NOT NULL,
-  `cod_carro` int(11) NOT NULL,
-  `cod_reserva` int(11) NOT NULL,
-  `quilometragem_final` int(11) DEFAULT 0,
-  `checklist` text DEFAULT NULL,
-  `observacoes` text DEFAULT NULL,
-  `data` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -57,6 +41,7 @@ CREATE TABLE `tbl_carros` (
   `status` enum('disponivel','alugado','reservado','manutencao','documento_atrasado') DEFAULT 'disponivel',
   `km_total` int(11) DEFAULT 0,
   `descricao` text DEFAULT NULL,
+  `imagem_url` varchar(1024) DEFAULT NULL,
   `data_cadastro` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -64,11 +49,13 @@ CREATE TABLE `tbl_carros` (
 -- Extraindo dados da tabela `tbl_carros`
 --
 
-INSERT INTO `tbl_carros` (`cod_carro`, `marca`, `modelo`, `categoria`, `ano`, `cor`, `combustivel`, `cambio`, `ar_condicionado`, `preco_diaria`, `status`, `km_total`, `descricao`, `data_cadastro`) VALUES
-(1, 'Honda', 'Civic', 'Sedan', '2024', 'Preto', 'flex', 'automatico', 1, 400.00, 'disponivel', 2500000, '', '2025-10-01 15:13:14'),
-(3, 'Bicicleta', 'Multilaser', 'Luxo', '2010', 'amarela', 'alcool', 'automatico', 0, 9.00, 'reservado', 100, '', '2025-10-02 14:24:09'),
-(8, 'Honda', 'HRV', 'SUV', '2025', 'Vinho', 'flex', 'automatico', 0, 99.00, 'disponivel', 2000, '', '2025-10-09 16:55:46'),
-(9, 'Chevrolet', 'Onix', 'Hatch', '2024', 'Branco', 'gasolina', 'manual', 1, 10.00, 'disponivel', 1234, '', '2025-10-15 15:07:53');
+INSERT INTO `tbl_carros` (`cod_carro`, `marca`, `modelo`, `categoria`, `ano`, `cor`, `combustivel`, `cambio`, `ar_condicionado`, `preco_diaria`, `status`, `km_total`, `descricao`, `imagem_url`, `data_cadastro`) VALUES
+(1, 'Honda', 'Civic', 'Sedan', '2024', 'Preto', 'flex', 'automatico', 1, 237.00, 'disponivel', 2500000, '', 'https://mlqt0se4pk9p.i.optimole.com/q:85/https://www.autodata.com.br/admin/imagens/noticias/honda-civic-2020-tem-nova-versao-de-entrada_68fb894f909bff337c86609fe56aea1b.jpg', '2025-10-01 15:13:14'),
+(3, 'Bicicleta com motor', 'Multilaser', 'Luxo', '2010', 'amarela', 'alcool', 'automatico', 0, 1.00, 'disponivel', 100, '', 'https://img.odcdn.com.br/wp-content/uploads/2023/03/ebike-flash.jpg', '2025-10-02 14:24:09'),
+(8, 'Honda', 'HRV', 'SUV', '2025', 'Vinho', 'flex', 'automatico', 0, 250.87, 'disponivel', 2000, '', 'https://cdn.motor1.com/images/mgl/nAylgy/s3/honda-hr-v-touring-2023.jpg', '2025-10-09 16:55:46'),
+(9, 'Chevrolet', 'Onix', 'Hatch', '2024', 'Branco', 'gasolina', 'manual', 1, 127.00, 'disponivel', 1234, '', 'https://cdn.motor1.com/images/mgl/xqowy2/s3/chevrolet-onix-plus-premier-2023-vs.-hyundai-hb20s-platinum-plus-2023.jpg', '2025-10-15 15:07:53'),
+(13, 'Ford', 'Ranger Raptor', 'OffRoad', '2025', 'Preto', 'flex', 'automatico', 1, 324.88, 'disponivel', 20000, '', 'https://cdn.motor1.com/images/mgl/NGjEPY/s3/2024-ford-ranger-raptor.jpg', '2025-11-05 21:18:26'),
+(14, 'Volkswagem', 'Nivus', 'Luxo', '2026', 'Preto', 'flex', 'automatico', 1, 1000.00, 'disponivel', 10000, '', 'https://img.olx.com.br/thumbs700x500/78/787576948178139.webp', '2025-11-17 14:38:32');
 
 -- --------------------------------------------------------
 
@@ -126,7 +113,10 @@ INSERT INTO `tbl_enderecos` (`cod_endereco`, `cod_usuario`, `cep`, `logradouro`,
 (36, 187, '72260-631', 'Quadra QNO 16 Conjunto 31', '04', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
 (37, 188, '72160-804', 'Quadra QNL 18 Conjunto D', '89', 'bvxfc', 'Taguatinga Norte (Taguatinga)', 'Brasília', 'DF'),
 (38, 189, '72260-631', 'Quadra QNO 16 Conjunto 31', '16', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
-(39, 190, '72260-631', 'Quadra QNO 16 Conjunto 31', '16', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF');
+(39, 190, '72260-631', 'Quadra QNO 16 Conjunto 31', '16', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
+(40, 191, '72260-631', '', '7', 'Conjunto H', '', '', ''),
+(41, 140, '72260-631', 'Quadra QNO 16 Conjunto 31', '7', 'Conjunto H', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF'),
+(42, 193, '72260-631', 'Quadra QNO 16 Conjunto 31', '16', '', 'Ceilândia Norte (Ceilândia)', 'Brasília', 'DF');
 
 -- --------------------------------------------------------
 
@@ -141,17 +131,12 @@ CREATE TABLE `tbl_favoritos` (
   `data_adicionado` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Estrutura da tabela `tbl_fotos_carros`
+-- Extraindo dados da tabela `tbl_favoritos`
 --
 
-CREATE TABLE `tbl_fotos_carros` (
-  `cod_foto` int(11) NOT NULL,
-  `cod_carro` int(11) NOT NULL,
-  `url_foto` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `tbl_favoritos` (`cod_favorito`, `cod_usuario`, `cod_carro`, `data_adicionado`) VALUES
+(5, 139, 9, '2025-11-18 00:40:51');
 
 -- --------------------------------------------------------
 
@@ -385,23 +370,61 @@ INSERT INTO `tbl_logs` (`cod_log`, `cod_usuario`, `acao_realizada`, `detalhes`, 
 (211, 101, 'LOGIN_SUCESSO', 'Usuário \'administrador\' realizou login no sistema.', '2025-11-03 15:34:22'),
 (212, 101, 'CRIACAO_RESERVA', 'Usuário \'administrador\' criou a reserva #1 (valor R$ 4500) para o carro ID 1. Status: Pendente.', '2025-11-03 15:34:34'),
 (213, 101, 'ACESSO_NEGADO', 'Tentativa de acesso não autorizado pelo usuário \'administrador\' à página \'/Projeto/view/reservas/minhasReservas.php\'. Perfil requerido: cliente, usuario', '2025-11-03 15:34:34'),
-(214, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #55. Novo status: concluida.', '2025-11-03 15:35:08');
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `tbl_manutencoes`
---
-
-CREATE TABLE `tbl_manutencoes` (
-  `cod_manutencao` int(11) NOT NULL,
-  `cod_carro` int(11) NOT NULL,
-  `tipo_servico` varchar(255) NOT NULL,
-  `custo` decimal(10,2) NOT NULL,
-  `responsavel` varchar(255) NOT NULL,
-  `data` datetime DEFAULT current_timestamp(),
-  `observacoes` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(214, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #55. Novo status: concluida.', '2025-11-03 15:35:08'),
+(215, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Chevrolet Onix\' (ID: 9).', '2025-11-03 16:34:41'),
+(216, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Honda Civic\' (ID: 1).', '2025-11-03 16:34:49'),
+(217, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Honda HRV\' (ID: 8).', '2025-11-03 16:34:57'),
+(218, 191, 'LOGIN_SUCESSO', 'Usuário \'andre\' realizou login no sistema.', '2025-11-03 18:29:10'),
+(219, 191, 'CRIACAO_RESERVA', 'Usuário \'andre\' criou a reserva #1 (valor R$ 1270) para o carro ID 9. Status: Pendente.', '2025-11-03 18:30:15'),
+(220, 191, 'PAGAMENTO_RESERVA', 'Usuário \'andre\' (ID: 191) pagou a reserva #56 via cartao. Status alterado para \'aguardando_retirada\'.', '2025-11-03 18:30:42'),
+(221, 140, 'LOGIN_SUCESSO', 'Usuário \'gerente\' realizou login no sistema.', '2025-11-03 18:31:54'),
+(222, 140, 'CADASTRO_ADMIN', 'Admin \'gerente\' criou o novo usuário \'lucas\' (lucas@gmail.com) com o perfil \'funcionario\'.', '2025-11-03 18:33:38'),
+(223, 140, 'DESATIVACAO_USUARIO', 'Admin \'gerente\' desativou a conta \'2\'.', '2025-11-03 18:34:41'),
+(224, 140, 'CADASTRO_CARRO', 'Usuário \'gerente\' adicionou o novo carro: bmw sedam.', '2025-11-03 18:35:44'),
+(225, 140, 'EXCLUSAO_CARRO', 'Usuário \'gerente\' excluiu o carro \'bmw sedam\'.', '2025-11-03 18:35:59'),
+(226, 140, 'ATUALIZACAO_CARRO', 'Usuário \'gerente\' atualizou os dados do carro \'Bicicleta com motor Multilaser\' (ID: 3).', '2025-11-03 18:36:19'),
+(227, 140, 'CRIACAO_RESERVA', 'Usuário \'gerente\' criou a reserva #1 (valor R$ 237) para o carro ID 1. Status: Pendente.', '2025-11-03 18:37:38'),
+(228, 140, 'ACESSO_NEGADO', 'Tentativa de acesso não autorizado pelo usuário \'gerente\' à página \'/Projeto/view/reservas/minhasReservas.php\'. Perfil requerido: cliente, usuario', '2025-11-03 18:37:39'),
+(229, 140, 'MUDAR_STATUS_ATIVA', 'Usuário \'gerente\' marcou a reserva #56 como ativa.', '2025-11-03 18:38:07'),
+(230, 140, 'MUDAR_STATUS_ATIVA', 'Usuário \'gerente\' marcou a reserva #56 como ativa.', '2025-11-03 18:38:10'),
+(231, 140, 'CADASTRO_MULTA', 'Usuário \'gerente\' registrou uma multa de R$ R$ 89.99 para a reserva #55.', '2025-11-03 18:38:57'),
+(232, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Bicicleta com motor Multilaser\' (ID: 3).', '2025-11-04 04:10:59'),
+(233, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Honda HRV\' (ID: 8).', '2025-11-04 04:27:26'),
+(234, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Honda HRV\' (ID: 8).', '2025-11-04 04:27:26'),
+(235, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Honda HRV\' (ID: 8).', '2025-11-04 04:28:11'),
+(236, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Honda HRV\' (ID: 8).', '2025-11-04 04:28:11'),
+(237, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Honda HRV\' (ID: 8).', '2025-11-04 04:28:29'),
+(238, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Honda HRV\' (ID: 8).', '2025-11-04 04:28:29'),
+(239, 101, 'DESATIVACAO_USUARIO', 'Admin \'administrador\' desativou a conta \'13\'.', '2025-11-04 04:36:36'),
+(240, 101, 'DESATIVACAO_USUARIO', 'Admin \'administrador\' desativou a conta \'4\'.', '2025-11-04 04:36:43'),
+(241, 101, 'DESATIVACAO_USUARIO', 'Admin \'administrador\' desativou a conta \'6\'.', '2025-11-04 04:36:45'),
+(242, 139, 'CRIACAO_RESERVA', 'Usuário \'cliente\' criou a reserva #1 (valor R$ 2508.7) para o carro ID 8. Status: Pendente.', '2025-11-04 04:40:05'),
+(243, 139, 'CANCELAMENTO_RESERVA', 'Usuário \'cliente\' cancelou a reserva #58.', '2025-11-04 04:46:54'),
+(244, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Honda Civic\' (ID: 1).', '2025-11-06 00:15:12'),
+(245, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Honda Civic\' (ID: 1).', '2025-11-06 00:15:12'),
+(246, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Chevrolet Onix\' (ID: 9).', '2025-11-06 00:15:55'),
+(247, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Chevrolet Onix\' (ID: 9).', '2025-11-06 00:15:55'),
+(248, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Bicicleta com motor Multilaser\' (ID: 3).', '2025-11-06 00:16:30'),
+(249, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Bicicleta com motor Multilaser\' (ID: 3).', '2025-11-06 00:16:30'),
+(250, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #57. Novo status: concluida.', '2025-11-06 00:16:39'),
+(251, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #56. Novo status: concluida.', '2025-11-06 00:16:45'),
+(252, 101, 'CADASTRO_CARRO', 'Usuário \'administrador\' adicionou o novo carro: Ford Ranger Raptor.', '2025-11-06 00:18:26'),
+(253, 101, 'CADASTRO_CARRO', 'Usuário \'administrador\' adicionou o novo carro: Ford Ranger Raptor.', '2025-11-06 00:18:26'),
+(254, 101, 'EXCLUSAO_CARRO', 'Usuário \'administrador\' excluiu o carro \'Ford Ranger Raptor\'.', '2025-11-06 00:18:39'),
+(255, 101, 'EXCLUSAO_CARRO', 'Usuário \'administrador\' excluiu o carro \'ID 12\'.', '2025-11-06 00:18:39'),
+(256, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Ford Ranger Raptor\' (ID: 13).', '2025-11-06 00:18:45'),
+(257, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Ford Ranger Raptor\' (ID: 13).', '2025-11-06 00:18:45'),
+(258, 101, 'CADASTRO_CARRO', 'Usuário \'administrador\' adicionou o novo carro: Volkswagem Nivus.', '2025-11-17 17:38:33'),
+(259, 101, 'CADASTRO_CARRO', 'Usuário \'administrador\' adicionou o novo carro: Volkswagem Nivus.', '2025-11-17 17:38:33'),
+(260, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou os dados do carro \'Volkswagem Nivus\' (ID: 14).', '2025-11-17 17:38:44'),
+(261, 101, 'ATUALIZACAO_CARRO', 'Usuário \'administrador\' atualizou o carro \'Volkswagem Nivus\' (ID: 14).', '2025-11-17 17:38:44'),
+(262, 101, 'EXCLUSAO_CARRO', 'Usuário \'administrador\' excluiu o carro \'Volkswagem Nivus\'.', '2025-11-17 17:38:51'),
+(263, 101, 'EXCLUSAO_CARRO', 'Usuário \'administrador\' excluiu o carro \'ID 15\'.', '2025-11-17 17:38:51'),
+(264, 101, 'LOGIN_FALHA', 'Tentativa de login falhou para o e-mail \'admin@gmail.com\'.', '2025-11-18 01:21:44'),
+(265, 139, 'CRIACAO_RESERVA', 'Usuário \'cliente\' criou a reserva #1 (valor R$ 5) para o carro ID 3. Status: Pendente.', '2025-11-25 18:12:27'),
+(266, 139, 'CANCELAMENTO_RESERVA', 'Usuário \'cliente\' cancelou a reserva #59.', '2025-11-25 18:13:49'),
+(267, 193, 'CRIACAO_RESERVA', 'Usuário \'xande\' criou a reserva #1 (valor R$ 1587.5) para o carro ID 9. Status: Pendente.', '2025-11-26 02:48:02'),
+(268, 101, 'ATUALIZACAO_RESERVA', 'Usuário \'administrador\' atualizou a reserva #60. Novo status: concluida.', '2025-11-26 02:50:10');
 
 -- --------------------------------------------------------
 
@@ -428,7 +451,8 @@ CREATE TABLE `tbl_multas` (
 
 INSERT INTO `tbl_multas` (`cod_multa`, `cod_reserva`, `descricao`, `valor`, `status`, `data_vencimento`, `data_registro`, `data_resolucao`, `cod_usuario_registro`, `observacoes`) VALUES
 (1, 19, 'exceço de velocidade', 130.00, 'pendente', '2025-10-30', '2025-10-18 02:30:13', NULL, 101, ''),
-(2, 19, 'exceço de velocidade', 120.00, 'cancelada', '2025-10-23', '2025-10-18 02:54:46', NULL, 101, '');
+(2, 19, 'exceço de velocidade', 120.00, 'cancelada', '2025-10-23', '2025-10-18 02:54:46', NULL, 101, ''),
+(3, 55, 'velocidade', 0.00, 'pendente', '2025-11-14', '2025-11-03 18:38:57', NULL, 140, '');
 
 -- --------------------------------------------------------
 
@@ -513,7 +537,12 @@ INSERT INTO `tbl_reservas` (`cod_reserva`, `cod_usuario`, `cod_carro`, `cod_plan
 (52, 139, 8, NULL, '2025-11-04 00:00:00', '2025-11-19 00:00:00', 'cancelada', 0, NULL, 1856.25, NULL, 0),
 (53, 139, 1, NULL, '2025-11-04 00:00:00', '2025-11-20 00:00:00', 'cancelada', 0, NULL, 8000.00, NULL, 0),
 (54, 190, 8, NULL, '2025-11-04 00:00:00', '2025-11-27 00:00:00', 'cancelada', 0, NULL, 2846.25, NULL, 0),
-(55, 101, 1, NULL, '2025-11-03 00:00:00', '2025-11-12 00:00:00', 'concluida', 0, NULL, 3240.00, NULL, 0);
+(55, 101, 1, NULL, '2025-11-03 00:00:00', '2025-11-12 00:00:00', 'concluida', 0, NULL, 3240.00, NULL, 0),
+(56, 191, 9, NULL, '2025-11-04 00:00:00', '2025-11-12 00:00:00', 'concluida', 0, NULL, 914.40, NULL, 0),
+(57, 140, 1, NULL, '2025-11-12 00:00:00', '2025-11-13 00:00:00', 'concluida', 0, NULL, 237.00, NULL, 0),
+(58, 139, 8, NULL, '2025-11-04 00:00:00', '2025-11-12 00:00:00', 'cancelada', 0, NULL, 2508.70, NULL, 0),
+(59, 139, 3, NULL, '2025-11-25 00:00:00', '2025-11-29 00:00:00', 'cancelada', 0, NULL, 5.00, NULL, 0),
+(60, 193, 9, NULL, '2025-11-26 00:00:00', '2025-12-06 00:00:00', 'concluida', 0, NULL, 1143.00, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -543,7 +572,7 @@ INSERT INTO `tbl_usuarios` (`cod_usuario`, `nome`, `email`, `senha`, `perfil`, `
 (137, 'usuario', 'usuario@gmail.com', '$2y$10$48wAwUUb8U.2jwZxz1HI1ulRJGSGrMmWNrZkkgZlAKgJedMRQnb9O', 'usuario', '2025-10-06 15:53:39', NULL, NULL, 0, 'ativo'),
 (138, 'Usuario Completo', 'usuariocompleto@gmail.com', '$2y$10$KHJYKvA0uq2knlR.871FsOEETiCJDBbam7IGrKznAmtWaudjj9DRu', 'usuario', '2025-10-06 15:54:01', NULL, NULL, 1, 'ativo'),
 (139, 'cliente', 'cliente@gmail.com', '$2y$10$jcY7JP8LdXr888EAgK.vNek8S0S1mrbXtsmy6TksiFNjygwiwLfpu', 'cliente', '2025-10-06 15:54:37', '(61) 9957-7067', '080.608.401-42', 1, 'ativo'),
-(140, 'gerente', 'gerente@gmail.com', '$2y$10$4iXCvP6GFq9/ytduHiTPM.ebRvlG/IDriFdlbMda6mUI5XMLe7MgO', 'gerente', '2025-10-06 15:54:48', NULL, NULL, 0, 'ativo'),
+(140, 'gerente', 'gerente@gmail.com', '$2y$10$4iXCvP6GFq9/ytduHiTPM.ebRvlG/IDriFdlbMda6mUI5XMLe7MgO', 'gerente', '2025-10-06 15:54:48', '(61) 8888-8999', '983.187.630-09', 1, 'ativo'),
 (141, 'funcionario', 'funcionario@gmail.com', '$2y$10$pW1jbSeNDBvzPDcGQG1jpu5fLC5JqqQmQM7oWNy.KRmx9Q0oj1qVG', 'funcionario', '2025-10-06 15:54:57', NULL, NULL, 0, 'ativo'),
 (146, 'Suco de uva', 'suco@gmail.com', '$2y$10$pD5mcnxBLArNxalMAjRUQ.QOCKt3sqYzEOlBrSYSIAIrehWb6rHLS', 'cliente', '2025-10-08 14:23:51', '(66) 66666-6666', '080.608.401-42', 1, 'ativo'),
 (147, 'asdasd', 'asd@gmail.com', '$2y$10$C0Nhw6YOJZbutoqH7L2YbOfGXbjtlajzdioqStKxjdjocM.xDuz6W', 'usuario', '2025-10-08 14:28:37', NULL, NULL, 0, 'inativo'),
@@ -570,11 +599,11 @@ INSERT INTO `tbl_usuarios` (`cod_usuario`, `nome`, `email`, `senha`, `perfil`, `
 (168, 'ney', 'neymar1@gmail.com', '$2y$10$yplVN5v5fo7nLs042BBjZOd8WovRhg2S0nTjiDCEnTtULJxtWi/ei', 'cliente', '2025-10-20 16:51:40', '(61) 99577-0554', '080.608.401-42', 1, 'ativo'),
 (169, 'a', 'neimito@gmail.com', '$2y$10$FGiwKyJe2Mi7kAq/CN3LZe6PFWW1oCu5bj3vjgSDNVPSOAoY0bpx6', 'usuario', '2025-10-20 17:40:24', NULL, NULL, 0, 'ativo'),
 (170, 'ney', '1@gmail.com', '$2y$10$aMGbDZsK0Acz/GMmHT.OCuP.TxfX2iaj9onAWNoIOB/j6nkLSVn0C', 'usuario', '2025-10-21 14:30:09', NULL, NULL, 0, 'ativo'),
-(171, '13', '2@gmail.com', '$2y$10$rczbYjD/jDwSqOjRBGgq4uai.KibH2UrtExFIGBBYLFaGtGJ96.Ii', 'usuario', '2025-10-21 14:34:18', NULL, NULL, 0, 'ativo'),
-(172, '2', '3@gmail.com', '$2y$10$FMymygZr8htjyRXdr4DN1e6wmqSUDsC3PLuxIUC7lLw0xaqzC2th2', 'usuario', '2025-10-21 14:38:39', NULL, NULL, 0, 'ativo'),
-(173, '4', '4@gmail.com', '$2y$10$EAfUZO.KHOoD6cTT8tGsWOz.7TrXHTPdCMf6ZKlfRBFXpEhRrfkzC', 'usuario', '2025-10-21 14:58:06', NULL, NULL, 0, 'ativo'),
+(171, '13', '2@gmail.com', '$2y$10$rczbYjD/jDwSqOjRBGgq4uai.KibH2UrtExFIGBBYLFaGtGJ96.Ii', 'usuario', '2025-10-21 14:34:18', NULL, NULL, 0, 'inativo'),
+(172, '2', '3@gmail.com', '$2y$10$FMymygZr8htjyRXdr4DN1e6wmqSUDsC3PLuxIUC7lLw0xaqzC2th2', 'usuario', '2025-10-21 14:38:39', NULL, NULL, 0, 'inativo'),
+(173, '4', '4@gmail.com', '$2y$10$EAfUZO.KHOoD6cTT8tGsWOz.7TrXHTPdCMf6ZKlfRBFXpEhRrfkzC', 'usuario', '2025-10-21 14:58:06', NULL, NULL, 0, 'inativo'),
 (174, 'a', 'n@gmail.com', '$2y$10$iBlyWYEBH1VqzRERtD60meMNgh5Nqa6BEJzmhVdxKNRa3dRnbW9Qq', 'usuario', '2025-10-21 14:59:40', NULL, NULL, 0, 'ativo'),
-(175, '6', '6@gmail.com', '$2y$10$6fjB.AHeF7jV4VVPoionruh654jsiVnaOGTtUkH2vxU76/Jj3B1WG', 'usuario', '2025-10-21 15:11:32', NULL, NULL, 0, 'ativo'),
+(175, '6', '6@gmail.com', '$2y$10$6fjB.AHeF7jV4VVPoionruh654jsiVnaOGTtUkH2vxU76/Jj3B1WG', 'usuario', '2025-10-21 15:11:32', NULL, NULL, 0, 'inativo'),
 (176, 'xande', 't1@gmail.com', '$2y$10$N0NVQbTAmCCSBnJG9EL44.8ekiTTaqEHtW0O0uPrkUpYPbP3XIvhu', 'cliente', '2025-10-22 13:07:59', '(61) 99577-0554', '080.608.401-42', 1, 'ativo'),
 (177, 'weyller', 'weyller@gmail.com', '$2y$10$h1dWyk6aB4ElB1AcxsSfcOtD8oqqt1M7rc.C8ZHXI6i326EaJoEN2', 'cliente', '2025-10-23 16:25:57', '(66) 6666-6666', '080.608.401-42', 1, 'ativo'),
 (178, 'weyller2', 'weyller2@gmail.com', '$2y$10$1bHugaaKBtDQ7KaA2zOl/ukbN6viUVx1wiY4J9Lk1UCg4TKnICJCW', 'usuario', '2025-10-23 16:32:17', '(66) 6666-6666', '080.608.401-42', 1, 'ativo'),
@@ -589,19 +618,14 @@ INSERT INTO `tbl_usuarios` (`cod_usuario`, `nome`, `email`, `senha`, `perfil`, `
 (187, 'madrid', 'madrid2@gmail.com', '$2y$10$CEcpCogKLd9NIHPUNM.3cekkaNPmVKArQODLrE3NFWaaguKMqaNuC', 'cliente', '2025-10-30 15:02:34', '(66) 66666-6666', '080.608.401-42', 1, 'ativo'),
 (188, 'Pele', 'pele@gmail.com', '$2y$10$CQVimIdXTrn9Xh1pff0WCugoxp9RCnpPz9yJAtmFwf.pQss9DTFR2', 'cliente', '2025-10-30 16:40:21', '(98) 43923-8394', '054.187.281-80', 1, 'ativo'),
 (189, 'ana', 'ana@gmail.com', '$2y$10$6NrO1ziS5mfucaVdUAGcOuhosJbPfscsj2IkB8wr17KPp2h1GBty6', 'usuario', '2025-11-02 16:49:24', '(61) 99577-0554', '080.608.401-42', 1, 'ativo'),
-(190, 'xande', 'iop@gmail.com', '$2y$10$jHEhVq1T5upI17wjdZykvO5Y6fwqokHpklxQia7TlQ2jIrml3gIWi', 'cliente', '2025-11-03 12:33:28', '(61) 99577-0554', '080.608.401-42', 1, 'ativo');
+(190, 'xande', 'iop@gmail.com', '$2y$10$jHEhVq1T5upI17wjdZykvO5Y6fwqokHpklxQia7TlQ2jIrml3gIWi', 'cliente', '2025-11-03 12:33:28', '(61) 99577-0554', '080.608.401-42', 1, 'ativo'),
+(191, 'andre', 'andre@gmail.com', '$2y$10$CNm7jwe34pcOyvua6YLWm.O1oknlBMKekUmDYmwN3ig2po/IJjPZW', 'cliente', '2025-11-03 15:29:02', '(61) 96857-4455', '080.608.401-42', 1, 'ativo'),
+(192, 'lucas', 'lucas@gmail.com', '$2y$10$EGz2RxPcE6FpHTi42RpH0.xX8OF6ZAupHkYno1nOcHiba6HRMoQJm', 'funcionario', '2025-11-03 15:33:38', NULL, NULL, 0, 'ativo'),
+(193, 'xande', 'xandinho@gmail.com', '$2y$10$fgUmUlvNl6.gV5fSCrO/S.TGFcsE5coOJM/MuOWBdqQKxzLUX.kvW', 'cliente', '2025-11-25 15:21:09', '(61) 99577-0554', '080.608.401-42', 1, 'ativo');
 
 --
 -- Índices para tabelas despejadas
 --
-
---
--- Índices para tabela `tbl_avaliacoes_carro`
---
-ALTER TABLE `tbl_avaliacoes_carro`
-  ADD PRIMARY KEY (`cod_avaliacao`),
-  ADD KEY `cod_carro` (`cod_carro`),
-  ADD KEY `cod_reserva` (`cod_reserva`);
 
 --
 -- Índices para tabela `tbl_carros`
@@ -625,25 +649,11 @@ ALTER TABLE `tbl_favoritos`
   ADD KEY `cod_carro` (`cod_carro`);
 
 --
--- Índices para tabela `tbl_fotos_carros`
---
-ALTER TABLE `tbl_fotos_carros`
-  ADD PRIMARY KEY (`cod_foto`),
-  ADD KEY `cod_carro` (`cod_carro`);
-
---
 -- Índices para tabela `tbl_logs`
 --
 ALTER TABLE `tbl_logs`
   ADD PRIMARY KEY (`cod_log`),
   ADD KEY `cod_usuario` (`cod_usuario`);
-
---
--- Índices para tabela `tbl_manutencoes`
---
-ALTER TABLE `tbl_manutencoes`
-  ADD PRIMARY KEY (`cod_manutencao`),
-  ADD KEY `cod_carro` (`cod_carro`);
 
 --
 -- Índices para tabela `tbl_multas`
@@ -679,52 +689,34 @@ ALTER TABLE `tbl_usuarios`
 --
 
 --
--- AUTO_INCREMENT de tabela `tbl_avaliacoes_carro`
---
-ALTER TABLE `tbl_avaliacoes_carro`
-  MODIFY `cod_avaliacao` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de tabela `tbl_carros`
 --
 ALTER TABLE `tbl_carros`
-  MODIFY `cod_carro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `cod_carro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_enderecos`
 --
 ALTER TABLE `tbl_enderecos`
-  MODIFY `cod_endereco` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `cod_endereco` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_favoritos`
 --
 ALTER TABLE `tbl_favoritos`
-  MODIFY `cod_favorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT de tabela `tbl_fotos_carros`
---
-ALTER TABLE `tbl_fotos_carros`
-  MODIFY `cod_foto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_favorito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_logs`
 --
 ALTER TABLE `tbl_logs`
-  MODIFY `cod_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
-
---
--- AUTO_INCREMENT de tabela `tbl_manutencoes`
---
-ALTER TABLE `tbl_manutencoes`
-  MODIFY `cod_manutencao` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_multas`
 --
 ALTER TABLE `tbl_multas`
-  MODIFY `cod_multa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cod_multa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_planos_aluguel`
@@ -736,24 +728,17 @@ ALTER TABLE `tbl_planos_aluguel`
 -- AUTO_INCREMENT de tabela `tbl_reservas`
 --
 ALTER TABLE `tbl_reservas`
-  MODIFY `cod_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `cod_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT de tabela `tbl_usuarios`
 --
 ALTER TABLE `tbl_usuarios`
-  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+  MODIFY `cod_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=194;
 
 --
 -- Restrições para despejos de tabelas
 --
-
---
--- Limitadores para a tabela `tbl_avaliacoes_carro`
---
-ALTER TABLE `tbl_avaliacoes_carro`
-  ADD CONSTRAINT `tbl_avaliacoes_carro_ibfk_1` FOREIGN KEY (`cod_carro`) REFERENCES `tbl_carros` (`cod_carro`) ON DELETE CASCADE,
-  ADD CONSTRAINT `tbl_avaliacoes_carro_ibfk_2` FOREIGN KEY (`cod_reserva`) REFERENCES `tbl_reservas` (`cod_reserva`) ON DELETE CASCADE;
 
 --
 -- Limitadores para a tabela `tbl_enderecos`
@@ -769,22 +754,10 @@ ALTER TABLE `tbl_favoritos`
   ADD CONSTRAINT `tbl_favoritos_ibfk_2` FOREIGN KEY (`cod_carro`) REFERENCES `tbl_carros` (`cod_carro`) ON DELETE CASCADE;
 
 --
--- Limitadores para a tabela `tbl_fotos_carros`
---
-ALTER TABLE `tbl_fotos_carros`
-  ADD CONSTRAINT `tbl_fotos_carros_ibfk_1` FOREIGN KEY (`cod_carro`) REFERENCES `tbl_carros` (`cod_carro`) ON DELETE CASCADE;
-
---
 -- Limitadores para a tabela `tbl_logs`
 --
 ALTER TABLE `tbl_logs`
   ADD CONSTRAINT `tbl_logs_ibfk_1` FOREIGN KEY (`cod_usuario`) REFERENCES `tbl_usuarios` (`cod_usuario`) ON DELETE SET NULL;
-
---
--- Limitadores para a tabela `tbl_manutencoes`
---
-ALTER TABLE `tbl_manutencoes`
-  ADD CONSTRAINT `tbl_manutencoes_ibfk_1` FOREIGN KEY (`cod_carro`) REFERENCES `tbl_carros` (`cod_carro`) ON DELETE CASCADE;
 
 --
 -- Limitadores para a tabela `tbl_multas`

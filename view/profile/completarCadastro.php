@@ -35,8 +35,23 @@ if ($isNovoCliente) {
     <link rel="stylesheet" href="assets/css/forms.css">
     <link rel="stylesheet" href="assets/css/profile.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/theme-dark.css">
 </head>
 <body class="bg-light">
+
+<script>
+(function () {
+    try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+            document.body.classList.add('theme-dark');
+            document.documentElement.style.colorScheme = 'dark';
+        } else {
+            document.documentElement.style.colorScheme = 'light';
+        }
+    } catch (e) {}
+})();
+</script>
 
 <div class="container mt-5 mb-5">
     <div class="card shadow-sm" style="max-width: 800px; margin: auto;">

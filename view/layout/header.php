@@ -26,6 +26,9 @@ else if (isset($acessoApenasLogado) && $acessoApenasLogado === true) {
 $usuarioLogado = !empty($_SESSION['usuario_logado']) && $_SESSION['usuario_logado'] === true;
 $usuarioNome = $_SESSION['usuario']['nome'] ?? '';
 $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
+$homeLink = in_array($usuarioPerfil, ['admin','gerente','funcionario'])
+    ? BASE_URL . '/view/admin/relatorios.php'
+    : BASE_URL . '/public/index.php';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -47,10 +50,27 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
     <link rel="stylesheet" href="assets/css/vitrine.css"> 
     <link rel="stylesheet" href="assets/css/responsivo.css">
     <link rel="stylesheet" href="assets/css/relatorios.css">
+    <link rel="stylesheet" href="assets/css/theme-dark.css">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+<script>
+// Aplica o tema salvo ANTES do resto para reduzir "flash" branco
+(function () {
+    try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+            document.body.classList.add('theme-dark');
+            document.documentElement.style.colorScheme = 'dark';
+        } else {
+            document.documentElement.style.colorScheme = 'light';
+        }
+    } catch (e) {
+    }
+})();
+</script>
 
 <header>
     <div class="top-bar">
@@ -63,7 +83,7 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
         </div>
 
         <nav class="header-links">
-            <a href="public/index.php">Início</a>
+            <a href="<?= $homeLink ?>">Início</a>
             <?php if (in_array($usuarioPerfil, ['funcionario', 'admin', 'gerente'])): ?>
                 <a href="view/admin/hub.php">Painel de Gestão</a>
             <?php else: ?>
@@ -75,6 +95,17 @@ $usuarioPerfil = $_SESSION['usuario']['perfil'] ?? 'visitante';
         </nav>
         
         <div class="user-info">
+            <button
+                type="button"
+                class="btn-header-action theme-toggle-btn"
+                id="btn-theme-toggle"
+                aria-label="Alternar tema claro/escuro"
+                title="Alternar tema">
+                
+                <span class="theme-icon theme-icon-sun">☀️</span>
+                <span class="theme-icon theme-icon-moon" style="display:none;">🌙</span>
+            </button>
+
             <?php if ($usuarioLogado): ?>
                 <span>Olá, <?= htmlspecialchars(ucfirst($usuarioNome)); ?></span>
                 <a href="controller/AuthControl.php?acao=logout" class="btn-logout">

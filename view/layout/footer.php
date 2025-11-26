@@ -13,6 +13,7 @@
 
 <script src="assets/js/management.js"></script>
 <script src="assets/js/form-feedback.js"></script>
+<script src="assets/js/theme-toggle.js"></script>
 
 <?php
 if (session_status() === PHP_SESSION_NONE) {

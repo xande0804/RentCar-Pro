@@ -34,6 +34,7 @@ $inicioDefault = (new DateTime('-30 days'))->format('Y-m-d');
         <button id="btn-aplicar" class="btn btn-primary">Aplicar</button>
         <button id="btn-ultimos7" class="btn btn-outline-secondary">Últimos 7</button>
         <button id="btn-ultimos30" class="btn btn-outline-secondary">Últimos 30</button>
+        <button id="btn-todo" class="btn btn-outline-secondary">Todo período</button>
     </div>
 
 
@@ -109,6 +110,8 @@ $inicioDefault = (new DateTime('-30 days'))->format('Y-m-d');
 
 <script>
   window.BASE_URL = <?= json_encode(BASE_URL) ?>;
+  window.REL_DEFAULT_INICIO = <?= json_encode($inicioDefault) ?>;
+  window.REL_DEFAULT_FIM    = <?= json_encode($hoje) ?>;
 </script>
 <script src="assets/js/relatorios.js"></script>
 

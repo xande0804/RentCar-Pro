@@ -4,6 +4,15 @@ $pageTitle = "Bem-vindo à RentCar Pro";
 
 // 2. Inclui o cabeçalho (que já define $usuarioLogado, $usuarioPerfil, etc.)
 require_once __DIR__ . '/../view/layout/header.php';
+
+$perfisStaff = ['admin', 'gerente', 'funcionario'];
+
+// 3. Se for admin / gerente / funcionário, SEMPRE redireciona pro Relatórios
+if (!empty($usuarioPerfil) && in_array($usuarioPerfil, $perfisStaff)) {
+    header("Location: " . BASE_URL . "/view/admin/relatorios.php");
+    exit;
+}
+
 ?>
 
 <div class="main-banner-image">

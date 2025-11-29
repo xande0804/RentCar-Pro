@@ -637,6 +637,7 @@
 
 .step-breadcrumb .sep {
     color: #9ca3af;
+    -webkit-user-select: none;
     user-select: none;
 }
 

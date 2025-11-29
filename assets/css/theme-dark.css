@@ -604,3 +604,178 @@ body.theme-dark .card-header.bg-light {
 body.theme-dark .card-header.bg-light p {
     color: #9ca3af !important;
 }
+
+/* ===== RELATÓRIOS E MÉTRICAS (CHARTS, TÍTULOS E LISTAS) ===== */
+
+/* Títulos dos gráficos */
+body.theme-dark .chart-title {
+    color: #e5e7eb !important;
+}
+
+/* Texto das legendas abaixo dos gráficos */
+body.theme-dark .chart-card,
+body.theme-dark .kpi-card {
+    background-color: #020617 !important;
+    border-color: #1f2937 !important;
+    color: #e5e7eb !important;
+}
+
+/* Skeleton no dark */
+body.theme-dark .skeleton {
+    background-color: #0b1120 !important;
+    border-color: #1f2937 !important;
+}
+
+/* Títulos das seções */
+body.theme-dark .table-header h2,
+body.theme-dark .table-header p {
+    color: #e5e7eb !important;
+}
+
+/* Lista de ranking (Top 5) */
+body.theme-dark .rank-list .rank-item {
+    color: #e5e7eb !important;
+    border-bottom: 1px solid #1f2937 !important;
+}
+
+/* Ranking destaque (1º lugar) */
+body.theme-dark .rank-list .rank-item.highlight {
+    background-color: #0b1120 !important;
+    color: #e5e7eb !important;
+}
+
+/* Colunas das listas (nome / reservas / faturamento) */
+body.theme-dark .rank-list .rank-item span {
+    color: #e5e7eb !important;
+}
+
+/* Linhas horizontais tracejadas utilizadas em Top 5 Carros */
+body.theme-dark .rank-list .dotted-line {
+    border-bottom: 1px dashed #1f2937 !important;
+}
+
+/* Barras horizontais de ocupação (fundo das barras) */
+body.theme-dark .chart-bar-bg {
+    background-color: #0b1120 !important;
+}
+
+/* Texto dos eixos que o Chart.js desenha (apenas quando ativa font) */
+body.theme-dark canvas {
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .rank-list {
+    color: #e5e7eb;
+}
+
+body.theme-dark .rank-list .rank-item > div {
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .rank-list .rank-item strong {
+    color: #e5e7eb !important;
+}
+
+/* emails em cinza suave */
+body.theme-dark .rank-list .rank-item small,
+body.theme-dark .rank-list .rank-item .text-muted {
+    color: #9ca3af !important;
+}
+
+/* ======== FIX PAINEL DE GESTÃO (MANTER 3 POR LINHA) ======== */
+
+/* Contêiner dos cards — força grid original */
+.hub-container {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 2rem !important;
+    margin-top: 2rem !important;
+    width: 100%;
+}
+
+/* Mantém 2 cards por linha no tablet */
+@media (max-width: 1100px) {
+    .hub-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Mantém 1 card por linha no mobile */
+@media (max-width: 700px) {
+    .hub-container {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ======== ESTILO DOS CARDS NO DARK (mantém aparência atual) ======== */
+
+body.theme-dark .hub-card {
+    background-color: #0b1120 !important;
+    border: 1px solid #1f2937 !important;
+    color: #e5e7eb !important;
+    border-radius: 0.75rem !important;
+    padding: 1.8rem !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 1.2rem !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35) !important;
+    transition: 0.25s ease !important;
+}
+
+body.theme-dark .hub-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25) !important;
+}
+
+/* Ícone */
+body.theme-dark .hub-card-icon {
+    min-width: 56px !important;
+    height: 56px !important;
+    border-radius: 0.75rem !important;
+    background-color: #111827 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #60a5fa !important;
+}
+
+/* Conteúdo */
+body.theme-dark .hub-card-content h3 {
+    color: #e5e7eb !important;
+    margin: 0 !important;
+}
+
+body.theme-dark .hub-card-content p {
+    color: #9ca3af !important;
+    margin-top: 0.4rem !important;
+}
+
+/* ====== AJUSTES TELA GERENCIAR USUÁRIOS (DARK) ====== */
+
+/* Cabeçalho da tabela (linha Nome / E-mail / Perfil / Status / Ações) */
+body.theme-dark .table-container .data-table thead tr th {
+    background-color: #020617 !important;
+    color: #e5e7eb !important;
+    border-bottom: 1px solid #1f2937 !important;
+}
+
+/* Células de conteúdo (nomes, e-mails etc.) */
+body.theme-dark .table-container .data-table tbody tr td {
+    color: #e5e7eb !important;
+}
+
+/* Linhas marcadas como inativas ficam um pouco mais apagadas */
+body.theme-dark .table-container .data-table tbody tr.inativo td {
+    color: #6b7280 !important;
+}
+
+/* Botão "Novo Usuário" – volta pro azul da paleta, igual tema claro */
+body.theme-dark .btn-add {
+    background-color: #2563eb !important;  /* azul primário */
+    border-color: #1d4ed8 !important;
+    color: #e5e7eb !important;
+}
+
+body.theme-dark .btn-add:hover {
+    background-color: #1d4ed8 !important;
+}

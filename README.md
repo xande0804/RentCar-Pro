@@ -1,9 +1,8 @@
 
 ---
 
-# 2) README — RentCar Pro
+README — RentCar Pro
 
-```md
 # RentCar Pro
 
 Sistema de locação de veículos desenvolvido com foco em gerenciamento de reservas, clientes, veículos e processos administrativos de uma locadora.
